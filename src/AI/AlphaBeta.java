@@ -1,6 +1,7 @@
 package AI;
 
 import AbstractClasses.Move;
+import GameClasses.GameBoard;
 import GameClasses.GameManager;
 import GameClasses.Player;
 
@@ -12,9 +13,13 @@ public class AlphaBeta {
         this.gameManager = gameManager;
     }
 
-    public Move getBestMove(Player player, int depth){
+    public Move minMax(Player player, Player opponent, int depth, boolean orderMoves){
 
-        //Tree moveTree = new Tree();
+        GameBoard board = GameBoard.createCopy(this.gameManager.getBoard());
+        State currentState = new State(board, player, opponent);
+        Tree tree = new Tree(currentState, depth, player.getPieceColour(), orderMoves);
+
+
 
 
 

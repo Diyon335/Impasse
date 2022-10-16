@@ -59,4 +59,5 @@ public class Space implements Comparable<Space> {
 
         return -1;
     }
+
 }

@@ -38,6 +38,8 @@ public class Slide extends Move {
         board.getPieceAt(getFrom()).setPosition(getTo().getRow(), getTo().getCol());
         board.getSpace(getFrom().getRow(), getFrom().getCol()).setPiece(null);
         board.getSpace(getTo().getRow(), getTo().getCol()).setPiece(getMovingPiece());
+
+        board.registerMove(this);
     }
 
 }

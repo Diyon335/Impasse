@@ -52,6 +52,8 @@ public class Crown extends Move {
 
         board.getSpace(getFrom().getRow(), getFrom().getCol()).setPiece(null);
         board.getSpace(getTo().getRow(), getTo().getCol()).setPiece(newDouble);
+
+        board.registerMove(this);
     }
 
 

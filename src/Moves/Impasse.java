@@ -66,6 +66,8 @@ public class Impasse extends Move {
 
         board.removePiece(from.getPiece(), player);
         to.setPiece(null);
+
+        board.registerMove(this);
     }
 
 

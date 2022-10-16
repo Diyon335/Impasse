@@ -129,4 +129,9 @@ public class DoublePiece extends Piece {
     public int getCount() {
         return 2;
     }
+
+    @Override
+    public String toString(){
+        return this.getColour() == Colour.WHITE ? "wd" : "bd";
+    }
 }

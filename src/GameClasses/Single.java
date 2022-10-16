@@ -89,4 +89,9 @@ public class Single extends Piece {
     public int getCount() {
         return 1;
     }
+
+    @Override
+    public String toString(){
+        return this.getColour() == Colour.WHITE ? "ws" : "bs";
+    }
 }

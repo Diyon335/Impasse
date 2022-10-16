@@ -12,12 +12,14 @@ public class GameBoard {
     private int rows, cols;
     private ArrayList<Piece> pieces;
     private int whitePieces, blackPieces;
+    private ArrayList<Move> movesPlayed;
 
     public GameBoard(int rows, int cols){
         this.rows = rows;
         this.cols = cols;
         this.board = new Space[rows][cols];
         this.pieces = new ArrayList<>();
+        this.movesPlayed = new ArrayList<>();
         this.whitePieces = 0;
         this.blackPieces = 0;
 
@@ -39,6 +41,14 @@ public class GameBoard {
 
             }
         }
+    }
+
+    public Move getLastMovePlayed(){
+        return this.movesPlayed.get(this.movesPlayed.size()-1);
+    }
+
+    public void registerMove(Move move){
+        this.movesPlayed.add(move);
     }
 
     public int getWhitePieces(){
@@ -160,5 +170,25 @@ public class GameBoard {
         }
 
         return toReturn;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder("");
+
+        for (int i = 0; i < this.rows; i++){
+            for (int j = 0; j < this.cols; j++){
+
+                if (this.board[i][j].getPiece() == null){
+                    s.append("* ");
+                } else {
+                    s.append(this.board[i][j].getPiece()).append(" ");
+                }
+            }
+
+            s.append("\n");
+        }
+
+        return s.toString();
     }
 }

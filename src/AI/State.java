@@ -20,9 +20,6 @@ public class State implements Comparable<State>{
 
     private Player player, opponent;
 
-
-    //TODO make state param a game board, and piece to move and implement a static "copy game board" in gameboard class
-    //TODO might have to make static copy of moves too (or maybe not since pieces in static board are new)
     public State (GameBoard board, Player player, Player opponent){
 
         this.board = board;
@@ -56,6 +53,9 @@ public class State implements Comparable<State>{
     }
 
 
+    public GameBoard getBoard(){
+        return this.board;
+    }
 
     public List<Move> getMoves(){
         return this.moves;
@@ -85,5 +85,10 @@ public class State implements Comparable<State>{
         }
 
         return -1;
+    }
+
+    @Override
+    public String toString(){
+        return this.board.toString();
     }
 }

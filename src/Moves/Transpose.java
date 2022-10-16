@@ -47,6 +47,8 @@ public class Transpose extends Move {
 
         single.setPosition(getFrom().getRow(), getFrom().getCol());
         doub.setPosition(getTo().getRow(), getTo().getCol());
+
+        board.registerMove(this);
     }
 
     @Override
