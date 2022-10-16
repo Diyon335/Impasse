@@ -37,6 +37,7 @@ public class Vector {
     public Node getLast(){return this.data[this.count - 1];}
 
 
+
     /**
      * Adds a Node to the beginning of the vector
      * @param node Node to be added
