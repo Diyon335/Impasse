@@ -11,6 +11,9 @@ import GUI.GUI;
 import Moves.Impasse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class GameManager {
 
@@ -22,11 +25,19 @@ public class GameManager {
     private GUI gui;
 
 
-    public GameManager(int rows, int columns){
+    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI){
         this.board = new GameBoard(rows, columns);
 
         this.white = this.board.getWhite();
         this.black = this.board.getBlack();
+
+        if (p1IsAI){
+            this.white.setAsAI();
+        }
+
+        if (p2IsAI){
+            this.black.setAsAI();
+        }
 
         initialiseBoard();
 
@@ -77,6 +88,19 @@ public class GameManager {
 
         if (move != null && move.canBeApplied()){
 
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //
+            System.out.println("moving: "+move.getMovingPiece());
+            System.out.println("actual pos: "+ Arrays.toString(move.getMovingPiece().getPosition()));
+            System.out.println("from: "+move.getFrom());
+            System.out.println("to: "+move.getTo());
+            //
+
             System.out.println(move);
             move.movePiece(this);
             registerTurn();
@@ -115,6 +139,11 @@ public class GameManager {
             }
 
             System.out.println(getTurn().getPieceColour().toString()+" should perform a crown");
+
+            if (getTurn().isAI()){
+                moveAI();
+            }
+
             return;
 
         }
@@ -135,12 +164,18 @@ public class GameManager {
             }
 
             System.out.println(getTurn().getPieceColour().toString()+" should perform a bear off");
+
+            if (getTurn().isAI()){
+                moveAI();
+            }
+
             return;
         }
 
         this.board.changeTurn();
 
         System.out.println(getTurn().getPieceColour().toString()+" to move");
+
 
         if (getTurn().isAtImpasse()){
 
@@ -151,6 +186,15 @@ public class GameManager {
             }
 
             System.out.println(getTurn().getPieceColour().toString()+" has reached an impasse, they may remove one piece");
+
+            if (getTurn().isAI()){
+                moveAI();
+            }
+
+        } else {
+            if (getTurn().isAI()){
+                moveAI();
+            }
         }
 
 
@@ -164,29 +208,29 @@ public class GameManager {
 
         try{
 
-//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("A1"), this),this.white);
-//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("D2"), this),this.white);
-//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("E1"), this),this.white);
-//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("H2"), this),this.white);
-//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("B8"), this),this.white);
-//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("C7"), this),this.white);
-//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("F8"), this),this.white);
-//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("G7"), this),this.white);
-//
-//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("A7"), this),this.black);
-//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("D8"), this),this.black);
-//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("E7"), this),this.black);
-//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("H8"), this),this.black);
-//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("B2"), this),this.black);
-//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("C1"), this),this.black);
-//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("F2"), this),this.black);
-//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("G1"), this),this.black);
+            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("A1"), this),this.white);
+            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("D2"), this),this.white);
+            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("E1"), this),this.white);
+            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("H2"), this),this.white);
+            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("B8"), this),this.white);
+            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("C7"), this),this.white);
+            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("F8"), this),this.white);
+            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("G7"), this),this.white);
+
+            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("A7"), this),this.black);
+            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("D8"), this),this.black);
+            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("E7"), this),this.black);
+            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("H8"), this),this.black);
+            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("B2"), this),this.black);
+            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("C1"), this),this.black);
+            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("F2"), this),this.black);
+            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("G1"), this),this.black);
 
 
-            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("G7"), this), this.white);
+            //this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("G7"), this), this.white);
 //            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("A1"), this),this.black);
 //            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("C1"), this),this.white);
-            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("D2"), this), this.black);
+            //this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("D2"), this), this.black);
 
 
             for (Piece piece : this.white.getPieces()){
@@ -202,32 +246,43 @@ public class GameManager {
         }
     }
 
+    private void moveAI(){
+        GameBoard boardCopy = GameBoard.createCopy(this.board);
+        State s = new State(boardCopy, this.board.getTurn(), getOpponent());
+        Tree tree = new Tree(s, 4, false);
+
+        tree.alphaBeta(tree.getRoot(), 2, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+        applyMove(tree.getBestMove());
+    }
+
 
     public void play(){
         System.out.println(this.turn.getPieceColour().toString()+" to move");
 
-        GameBoard boardCopy = GameBoard.createCopy(this.board);
+        if (getTurn().isAI()){
+            makeRandomFirstMove(getTurn());
+        }
+    }
 
-//        System.out.println(boardCopy);
-//        System.out.println(this.white == boardCopy.getWhite());
-//        System.out.println(this.black == boardCopy.getBlack());
-//        System.out.println(boardCopy.getPieces());
-//
-//        for (Piece piece : boardCopy.getPieces()){
-//            System.out.println(piece.getPlayer().getPieceColour());
-//        }
-//        System.out.println(boardCopy.getWhite().getAmountOfPieces());
-//        System.out.println(boardCopy.getBlack().getAmountOfPieces());
-//
-//        System.out.println(this.board == boardCopy);
+    public void makeRandomFirstMove(Player player){
+        List<Move> allMoves = new ArrayList<>();
 
-        State s = new State(boardCopy, this.board.getTurn(), getOpponent());
-        Tree tree = new Tree(s, 4, false);
+        for (Piece piece : player.getPieces()){
+            allMoves.addAll(piece.getLegalMoves());
+        }
 
+        Move move = allMoves.get(new Random().nextInt(allMoves.size()));
 
+        while (true){
 
-        tree.alphaBeta(tree.getRoot(), 2, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
-        System.out.println(tree.getBestMove());
+            if (move.canBeApplied()){
+                break;
+            } else {
+                move = allMoves.get(new Random().nextInt(allMoves.size()));
+            }
+        }
+
+        applyMove(move);
     }
 
     public Player getOpponent(){

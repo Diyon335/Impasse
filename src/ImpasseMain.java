@@ -15,7 +15,7 @@ public class ImpasseMain {
      */
     public static void main(String[] args) {
 
-        GameManager game = new GameManager(8,8);
+        GameManager game = new GameManager(8,8, true, true);
 
         game.play();
 

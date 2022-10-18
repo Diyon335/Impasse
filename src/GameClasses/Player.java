@@ -10,36 +10,21 @@ public class Player {
     private Colour pieceColour;
     private ArrayList<Piece> pieces;
     private int amountOfPieces = 0;
+    private boolean isAI;
 
     public Player (Colour pieceColour){
         this.pieceColour = pieceColour;
         this.pieces = new ArrayList<>();
+        this.isAI = false;
     }
 
-    /*public static Player copyPlayer(Player player, GameBoard board){
+    public void setAsAI(){
+        this.isAI = true;
+    }
 
-        System.out.println("Creating copy of player");
-        Player toReturn = new Player(player.getPieceColour());
-
-        for (Piece piece : player.getPieces()){
-
-            if (piece instanceof Single){
-                Single s = new Single(player.getPieceColour(), toReturn, new int[]{piece.getRow(), piece.getCol()});
-                toReturn.addPiece(s);
-                toReturn.removePiece(piece);
-                s.updateLegalMoves(board);
-            }
-
-            if (piece instanceof DoublePiece){
-                DoublePiece d = new DoublePiece(player.getPieceColour(), toReturn, new int[]{piece.getRow(), piece.getCol()});
-                toReturn.addPiece(d);
-                toReturn.removePiece(piece);
-                d.updateLegalMoves(board);
-            }
-        }
-
-        return toReturn;
-    }*/
+    public boolean isAI(){
+        return this.isAI;
+    }
 
     public ArrayList<Piece> getPieces() {
         return this.pieces;
