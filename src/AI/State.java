@@ -3,10 +3,10 @@ package AI;
 import AbstractClasses.Move;
 import AbstractClasses.Piece;
 import Enums.Colour;
-import GameClasses.GameBoard;
-import GameClasses.GameManager;
-import GameClasses.Player;
-import GameClasses.Space;
+import GameClasses.*;
+import Moves.BearOff;
+import Moves.Crown;
+import Moves.Impasse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,19 +34,49 @@ public class State implements Comparable<State>{
         }
     }
 
+    public Player getPlayer(){
+        return this.player;
+    }
+
+    public Player getOpponent(){
+        return this.opponent;
+    }
+
+    public int possibleNextStates(){
+        return this.moves.size();
+    }
+
     public List<State> getNextStates(){
 
         List<State> toReturn = new ArrayList<>();
 
         for (Move move : this.moves){
-            GameBoard boardCopy = GameBoard.createCopy(this.board);
-            move.movePiece(boardCopy);
 
-            for (Piece piece : boardCopy.getPieces()){
-                piece.updateLegalMoves(boardCopy);
+            if (move.canBeApplied()){
+
+                GameBoard boardCopy = GameBoard.createCopy(this.board);
+                move.movePiece(boardCopy);
+
+                for (Piece piece : boardCopy.getPieces()){
+                    piece.updateLegalMoves(boardCopy);
+                }
+
+                Player player = this.player.getPieceColour() == Colour.WHITE ? boardCopy.getWhite() : boardCopy.getBlack();
+                Player opponent = player.getPieceColour() == Colour.WHITE ? boardCopy.getBlack() : boardCopy.getWhite();
+
+                if (move instanceof Crown){
+                    toReturn.add(new State(boardCopy, player, player));
+
+                } else if (move instanceof BearOff){
+                    toReturn.add(new State(boardCopy, player, player));
+
+                } else if (move instanceof Impasse){
+                    toReturn.add(new State(boardCopy, player, player));
+
+                } else {
+                    toReturn.add(new State(boardCopy, opponent, player));
+                }
             }
-
-            toReturn.add(new State(boardCopy, this.opponent, this.player));
         }
 
         return toReturn;

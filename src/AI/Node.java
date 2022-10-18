@@ -7,11 +7,13 @@ public class Node implements Comparable<Node>{
     private State state;
     private Node parent;
     private Vector children;
+    private int score;
 
     public Node (State state, Vector children, Node parent){
         this.state = state;
         this.children = children;
         this.parent = parent;
+        this.score = 0;
     }
 
     public Node (State state){
@@ -24,6 +26,14 @@ public class Node implements Comparable<Node>{
 
     public Node getParent(){
         return this.parent;
+    }
+
+    public void setScore(int score){
+        this.score = score;
+    }
+
+    public int getScore() {
+        return this.score;
     }
 
     public void setParent(Node node){
@@ -92,5 +102,10 @@ public class Node implements Comparable<Node>{
     @Override
     public int compareTo(Node o) {
         return this.state.compareTo(o.getState());
+    }
+
+    @Override
+    public String toString(){
+        return this.state.toString();
     }
 }

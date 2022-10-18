@@ -47,6 +47,7 @@ public class BearOff extends Move {
         board.removePiece(getMovingPiece(), player);
         board.addPiece(newSingle, player);
 
+
         board.getSpace(getTo().getRow(), getTo().getCol()).setPiece(newSingle);
         board.getSpace(getTo().getRow(), getTo().getCol()).getPiece().setPosition(getTo().getRow(), getTo().getCol());
 

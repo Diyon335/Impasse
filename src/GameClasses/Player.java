@@ -16,6 +16,31 @@ public class Player {
         this.pieces = new ArrayList<>();
     }
 
+    /*public static Player copyPlayer(Player player, GameBoard board){
+
+        System.out.println("Creating copy of player");
+        Player toReturn = new Player(player.getPieceColour());
+
+        for (Piece piece : player.getPieces()){
+
+            if (piece instanceof Single){
+                Single s = new Single(player.getPieceColour(), toReturn, new int[]{piece.getRow(), piece.getCol()});
+                toReturn.addPiece(s);
+                toReturn.removePiece(piece);
+                s.updateLegalMoves(board);
+            }
+
+            if (piece instanceof DoublePiece){
+                DoublePiece d = new DoublePiece(player.getPieceColour(), toReturn, new int[]{piece.getRow(), piece.getCol()});
+                toReturn.addPiece(d);
+                toReturn.removePiece(piece);
+                d.updateLegalMoves(board);
+            }
+        }
+
+        return toReturn;
+    }*/
+
     public ArrayList<Piece> getPieces() {
         return this.pieces;
     }
@@ -71,8 +96,11 @@ public class Player {
     }
 
     public void removePiece(Piece piece){
-        this.pieces.remove(piece);
-        this.amountOfPieces-=piece.getCount();
+        if (hasPiece(piece)){
+            this.pieces.remove(piece);
+            this.amountOfPieces-=piece.getCount();
+        }
+
     }
 
     public boolean hasPiece(Piece piece){

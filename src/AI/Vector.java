@@ -125,4 +125,15 @@ public class Vector {
     public int size(){
         return this.count;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder("[");
+        for (Node n : this.data) {
+            s.append(n).append(" ");
+        }
+        s.append("]");
+
+        return s.toString();
+    }
 }

@@ -21,13 +21,13 @@ public abstract class Piece implements Comparable<Piece>{
     public Piece(Colour colour, Player player, int[] position, GameManager gameManager){
         this(colour, player, position);
         this.gameManager = gameManager;
-        this.moves = new ArrayList<>();
     }
 
     public Piece(Colour colour, Player player, int[] position){
         this.colour = colour;
         this.player = player;
         this.position = position;
+        this.moves = new ArrayList<>();
     }
 
     public Player getPlayer(){return this.player;}
@@ -84,7 +84,9 @@ public abstract class Piece implements Comparable<Piece>{
     }
 
     public void clearMoves(){
-        this.moves.clear();
+        if (this.moves.size() > 0){
+            this.moves.clear();
+        }
     }
 
     public boolean isWhite(){

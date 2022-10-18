@@ -1,6 +1,7 @@
 package GameClasses;
 
 import AI.State;
+import AI.Tree;
 import AbstractClasses.Move;
 import AbstractClasses.Piece;
 import Enums.GameState;
@@ -14,10 +15,8 @@ import java.util.ArrayList;
 public class GameManager {
 
     private final GameBoard board;
-    private GameState gameState;
     private Player white, black, turn;
 
-    //private ArrayList<Piece> pieces;
     private boolean pieceHeld = false;
     private Piece pieceToMove = null;
     private GUI gui;
@@ -25,10 +24,9 @@ public class GameManager {
 
     public GameManager(int rows, int columns){
         this.board = new GameBoard(rows, columns);
-        //this.pieces = new ArrayList<>();
 
-        this.white = new Player(Colour.WHITE);
-        this.black = new Player(Colour.BLACK);
+        this.white = this.board.getWhite();
+        this.black = this.board.getBlack();
 
         initialiseBoard();
 
@@ -36,15 +34,14 @@ public class GameManager {
             piece.updateLegalMoves(this.board);
         }
 
-        this.turn = this.white;
-        this.gameState = GameState.PLAYING;
+        this.turn = getTurn();
 
         this.gui = new GUI("Impasse", 720, 720, this);
         this.gui.init();
     }
 
     public Player getTurn(){
-        return this.turn;
+        return this.board.getTurn();
     }
 
     public boolean isPieceHeld(){
@@ -64,7 +61,7 @@ public class GameManager {
     }
 
     public boolean turnHasPiece(Piece piece){
-        return this.turn.hasPiece(piece);
+        return this.getBoard().getTurn().hasPiece(piece);
     }
 
 //    public void printBoard(){
@@ -93,9 +90,8 @@ public class GameManager {
 
         this.gui.getPanel().drawBoard();
 
-        if (this.turn.getAmountOfPieces() == 0){
-            endGame();
-            System.out.println(this.turn.getPieceColour()+" won the game!");
+        if (getTurn().getAmountOfPieces() == 0){
+            System.out.println(getTurn().getPieceColour()+" won the game!");
             return;
         }
 
@@ -103,9 +99,9 @@ public class GameManager {
             p.updateLegalMoves(this.board);
         }
 
-        if (this.board.hasSingleInFurthestRow(this.turn) && this.turn.hasFreeSingles()){
+        if (this.board.hasSingleInFurthestRow(getTurn()) && getTurn().hasFreeSingles()){
 
-            for (Piece piece : this.turn.getPieces()){
+            for (Piece piece : getTurn().getPieces()){
 
                 if (piece instanceof Single){
                     if (!((Single) piece).canCrown()){
@@ -118,14 +114,14 @@ public class GameManager {
                 }
             }
 
-            System.out.println(this.turn.getPieceColour().toString()+" should perform a crown");
+            System.out.println(getTurn().getPieceColour().toString()+" should perform a crown");
             return;
 
         }
 
-        if (this.board.hasDoublesInNearestRow(this.turn)){
+        if (this.board.hasDoublesInNearestRow(getTurn())){
 
-            for (Piece piece : this.turn.getPieces()){
+            for (Piece piece : getTurn().getPieces()){
 
                 if (piece instanceof Single){
                     piece.clearMoves();
@@ -138,23 +134,23 @@ public class GameManager {
                 }
             }
 
-            System.out.println(this.turn.getPieceColour().toString()+" should perform a bear off");
+            System.out.println(getTurn().getPieceColour().toString()+" should perform a bear off");
             return;
         }
 
-        this.turn = this.turn.getPieceColour() == Colour.WHITE ? this.black : this.white;
+        this.board.changeTurn();
 
-        System.out.println(this.turn.getPieceColour().toString()+" to move");
+        System.out.println(getTurn().getPieceColour().toString()+" to move");
 
-        if (this.turn.isAtImpasse()){
+        if (getTurn().isAtImpasse()){
 
-            for (Piece piece : this.turn.getPieces()){
+            for (Piece piece : getTurn().getPieces()){
                 piece.clearMoves();
                 Space s = this.board.getSpace(piece.getRow(), piece.getCol());
                 piece.addMove(new Impasse(piece,s,s));
             }
 
-            System.out.println(this.turn.getPieceColour().toString()+" has reached an impasse, they may remove one piece");
+            System.out.println(getTurn().getPieceColour().toString()+" has reached an impasse, they may remove one piece");
         }
 
 
@@ -168,29 +164,29 @@ public class GameManager {
 
         try{
 
-            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("A1"), this),this.white);
-            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("D2"), this),this.white);
-            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("E1"), this),this.white);
-            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("H2"), this),this.white);
-            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("B8"), this),this.white);
-            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("C7"), this),this.white);
-            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("F8"), this),this.white);
-            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("G7"), this),this.white);
+//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("A1"), this),this.white);
+//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("D2"), this),this.white);
+//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("E1"), this),this.white);
+//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("H2"), this),this.white);
+//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("B8"), this),this.white);
+//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("C7"), this),this.white);
+//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("F8"), this),this.white);
+//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("G7"), this),this.white);
+//
+//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("A7"), this),this.black);
+//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("D8"), this),this.black);
+//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("E7"), this),this.black);
+//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("H8"), this),this.black);
+//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("B2"), this),this.black);
+//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("C1"), this),this.black);
+//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("F2"), this),this.black);
+//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("G1"), this),this.black);
 
-            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("A7"), this),this.black);
-            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("D8"), this),this.black);
-            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("E7"), this),this.black);
-            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("H8"), this),this.black);
-            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("B2"), this),this.black);
-            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("C1"), this),this.black);
-            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("F2"), this),this.black);
-            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("G1"), this),this.black);
 
-
-//            this.board.addPiece(new DoublePiece(Colour.WHITE, this.white,stringToIndex("B4"), this),this.white);
+            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("G7"), this), this.white);
 //            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("A1"), this),this.black);
 //            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("C1"), this),this.white);
-//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("D2"), this),this.black);
+            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("D2"), this), this.black);
 
 
             for (Piece piece : this.white.getPieces()){
@@ -209,10 +205,33 @@ public class GameManager {
 
     public void play(){
         System.out.println(this.turn.getPieceColour().toString()+" to move");
+
+        GameBoard boardCopy = GameBoard.createCopy(this.board);
+
+//        System.out.println(boardCopy);
+//        System.out.println(this.white == boardCopy.getWhite());
+//        System.out.println(this.black == boardCopy.getBlack());
+//        System.out.println(boardCopy.getPieces());
+//
+//        for (Piece piece : boardCopy.getPieces()){
+//            System.out.println(piece.getPlayer().getPieceColour());
+//        }
+//        System.out.println(boardCopy.getWhite().getAmountOfPieces());
+//        System.out.println(boardCopy.getBlack().getAmountOfPieces());
+//
+//        System.out.println(this.board == boardCopy);
+
+        State s = new State(boardCopy, this.board.getTurn(), getOpponent());
+        Tree tree = new Tree(s, 4, false);
+
+
+
+        tree.alphaBeta(tree.getRoot(), 2, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+        System.out.println(tree.getBestMove());
     }
 
     public Player getOpponent(){
-        return this.turn.getPieceColour() == Colour.WHITE ? this.black : this.white;
+        return getTurn().getPieceColour() == Colour.WHITE ? this.black : this.white;
     }
 
     public int[] stringToIndex(String position) throws InvalidPiecePlacementException {
@@ -230,15 +249,6 @@ public class GameManager {
         }
 
         return new int[]{this.board.getSize() - number, letter - 65};
-    }
-
-
-    public GameState getGameState(){
-        return this.gameState;
-    }
-
-    private void endGame(){
-        this.gameState = GameState.ENDED;
     }
 
 

@@ -37,7 +37,7 @@ public class Step extends Move {
 
     @Override
     public void movePiece(GameBoard board) {
-        board.getPieceAt(getFrom()).setPosition(getTo().getRow(), getTo().getCol());
+        board.getSpace(getFrom().getRow(), getFrom().getCol()).getPiece().setPosition(getTo().getRow(), getTo().getCol());
         board.getSpace(getFrom().getRow(), getFrom().getCol()).setPiece(null);
         board.getSpace(getTo().getRow(), getTo().getCol()).setPiece(getMovingPiece());
 

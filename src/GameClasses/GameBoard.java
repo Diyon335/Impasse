@@ -13,6 +13,7 @@ public class GameBoard {
     private ArrayList<Piece> pieces;
     private int whitePieces, blackPieces;
     private ArrayList<Move> movesPlayed;
+    private Player white, black, turn;
 
     public GameBoard(int rows, int cols){
         this.rows = rows;
@@ -20,6 +21,9 @@ public class GameBoard {
         this.board = new Space[rows][cols];
         this.pieces = new ArrayList<>();
         this.movesPlayed = new ArrayList<>();
+        this.white = new Player(Colour.WHITE);
+        this.black = new Player(Colour.BLACK);
+        this.turn = this.white;
         this.whitePieces = 0;
         this.blackPieces = 0;
 
@@ -41,6 +45,30 @@ public class GameBoard {
 
             }
         }
+    }
+
+    public void changeTurn(){
+        this.turn = this.turn.getPieceColour() == Colour.WHITE ? this.black : this.white;
+    }
+
+    public Player getTurn(){
+        return this.turn;
+    }
+
+    public Player getWhite(){
+        return this.white;
+    }
+
+    public Player getBlack(){
+        return this.black;
+    }
+
+    public void setWhite(Player player){
+        this.white = player;
+    }
+
+    public void setBlack(Player player){
+        this.black = player;
     }
 
     public Move getLastMovePlayed(){
@@ -72,7 +100,9 @@ public class GameBoard {
         }
 
         this.pieces.add(piece);
+
     }
+
 
     public void removePiece(Piece piece, Player player){
 
@@ -165,8 +195,26 @@ public class GameBoard {
         GameBoard toReturn = new GameBoard(board.getSize() , board.getSize());
 
         for (Piece piece : board.getPieces()){
-            toReturn.getSpace(piece.getPosition()).setPiece(piece);
-            toReturn.getSpace(piece.getPosition()).getPiece().updateLegalMoves(toReturn);
+
+            Player player = piece.getPlayer().getPieceColour() == Colour.WHITE ? toReturn.getWhite() : toReturn.getBlack();
+
+            if (piece instanceof Single){
+
+                Single s = new Single(piece.getColour(), player, new int[]{piece.getRow(), piece.getCol()});
+                toReturn.getSpace(s.getRow(),s.getCol()).setPiece(s);
+
+                toReturn.addPiece(s, player);
+                s.updateLegalMoves(toReturn);
+            }
+
+            if (piece instanceof DoublePiece){
+
+                DoublePiece d = new DoublePiece(piece.getColour(), player, new int[]{piece.getRow(), piece.getCol()});
+                toReturn.getSpace(d.getRow(),d.getCol()).setPiece(d);
+
+                toReturn.addPiece(d, player);
+                d.updateLegalMoves(toReturn);
+            }
         }
 
         return toReturn;
