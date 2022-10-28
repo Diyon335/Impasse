@@ -54,7 +54,7 @@ public abstract class Piece implements Comparable<Piece>{
 
     public Move getMove(Space from, Space to){
         for (Move move : this.moves){
-            if (move.getFrom().equals(from) && move.getTo().equals(to)){
+            if (move.getFrom().compareTo(from) == 0 && move.getTo().compareTo(to) == 0){
                 return move;
             }
         }
@@ -119,10 +119,26 @@ public abstract class Piece implements Comparable<Piece>{
 
     @Override
     public int compareTo(Piece piece){
-        if (this.colour == piece.getColour() && this.moves.equals(piece.getLegalMoves()) && Arrays.equals(this.position, piece.getPosition())){
-            return 0;
+
+        if (this.colour != piece.getColour()){
+            return -1;
         }
 
-        return -1;
+        if (this.moves.size() != piece.getLegalMoves().size()){
+            return -1;
+        }
+
+        for (int i = 0; i < this.moves.size(); i++){
+
+            if (this.moves.get(i).compareTo(piece.getLegalMoves().get(i)) != 0){
+                return -1;
+            }
+        }
+
+        if (this.position[0] != piece.getRow() || this.position[1] != piece.getCol()){
+            return -1;
+        }
+
+        return 0;
     }
 }

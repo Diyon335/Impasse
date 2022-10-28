@@ -12,25 +12,37 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class State implements Comparable<State>{
+public class State {
 
     private List<Move> moves;
     private GameBoard board;
-    private HashMap<Piece,Space> boardMap;
 
     private Player player, opponent;
 
-    public State (GameBoard board, Player player, Player opponent){
+    public State (GameBoard board){
 
         this.board = board;
-        this.player = player;
-        this.opponent = opponent;
+        this.player = board.getTurn();
+        this.opponent = board.getOpponent();
 
-        this.boardMap = new HashMap<>();
         this.moves = new ArrayList<>();
 
-        for (Piece piece : this.player.getPieces()){
-            this.moves.addAll(piece.getLegalMoves());
+        if (this.player.isAtImpasse()){
+
+            for (Piece piece : this.player.getPieces()){
+                piece.clearMoves();
+                Space s = this.board.getSpace(piece.getRow(), piece.getCol());
+                Impasse i = new Impasse(piece, s , s);
+                piece.addMove(i);
+                this.moves.add(i);
+            }
+
+        } else {
+
+            for (Piece piece : this.player.getPieces()){
+
+                this.moves.addAll(piece.getLegalMoves());
+            }
         }
     }
 
@@ -54,28 +66,61 @@ public class State implements Comparable<State>{
 
             if (move.canBeApplied()){
 
-                GameBoard boardCopy = GameBoard.createCopy(this.board);
+                GameBoard boardCopy = new GameBoard(this.board.getSize(), this.board.getSize());
+                boardCopy.copyBoardFrom(this.board);
+
+                Player player = boardCopy.getTurn();
+                Player opponent = boardCopy.getOpponent();
+
                 move.movePiece(boardCopy);
 
                 for (Piece piece : boardCopy.getPieces()){
                     piece.updateLegalMoves(boardCopy);
                 }
 
-                Player player = this.player.getPieceColour() == Colour.WHITE ? boardCopy.getWhite() : boardCopy.getBlack();
-                Player opponent = player.getPieceColour() == Colour.WHITE ? boardCopy.getBlack() : boardCopy.getWhite();
+                if (boardCopy.hasSingleInFurthestRow(player) && player.hasFreeSingles()){
 
-                if (move instanceof Crown){
-                    toReturn.add(new State(boardCopy, player, player));
+//                    for (Piece piece : player.getPieces()){
+//
+//                        if (piece instanceof Single){
+//                            if (!((Single) piece).canCrown()){
+//                                piece.clearMoves();
+//                            }
+//                        }
+//
+//                        if (piece instanceof DoublePiece){
+//                            piece.clearMoves();
+//                        }
+//                    }
 
-                } else if (move instanceof BearOff){
-                    toReturn.add(new State(boardCopy, player, player));
-
-                } else if (move instanceof Impasse){
-                    toReturn.add(new State(boardCopy, player, player));
-
-                } else {
-                    toReturn.add(new State(boardCopy, opponent, player));
+                    boardCopy.setTurn(player);
+                    toReturn.add(new State(boardCopy));
+                    continue;
                 }
+
+                if (boardCopy.hasDoublesInNearestRow(player)){
+
+//                    for (Piece piece : player.getPieces()){
+//
+//                        if (piece instanceof Single){
+//                            piece.clearMoves();
+//                        }
+//
+//                        if (piece instanceof DoublePiece){
+//                            if(!((DoublePiece) piece).canBearOff()){
+//                                piece.clearMoves();
+//                            }
+//                        }
+//                    }
+
+                    boardCopy.setTurn(player);
+                    toReturn.add(new State(boardCopy));
+                    continue;
+
+                }
+
+                boardCopy.setTurn(opponent);
+                toReturn.add(new State(boardCopy));
             }
         }
 
@@ -95,27 +140,6 @@ public class State implements Comparable<State>{
         return this.board.getWhitePieces() == 0 || this.board.getBlackPieces() == 0;
     }
 
-    public int evaluateState(){
-        return EvaluationFunction.evaluate(this);
-    }
-
-
-    /**
-     * Compares this object with the specified object for order.  Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.
-     * @param o the object to be compared.
-     * @return a negative integer, zero, or a positive integer as this object
-     */
-    @Override
-    public int compareTo(State o) {
-
-        if(this.moves.equals(o.getMoves())){
-            return 0;
-        }
-
-        return -1;
-    }
 
     @Override
     public String toString(){

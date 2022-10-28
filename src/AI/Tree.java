@@ -1,21 +1,20 @@
 package AI;
 
 import AbstractClasses.Move;
+import Enums.Colour;
+import GameClasses.Player;
 
 
 public class Tree {
 
     private Node root;
     private int depth;
-    private boolean ordered;
 
-    public Tree(State state, int depth, boolean ordered){
+    public Tree(State state, int depth){
         this.root = new Node(state);
         this.depth = depth;
-        this.ordered = ordered;
 
-
-        growTree(this.root, depth, ordered);
+        growTree(this.root, depth);
     }
 
     public Node getRoot(){
@@ -24,8 +23,8 @@ public class Tree {
 
     public int alphaBeta(Node node, int depth, int alpha, int beta, boolean maxPlayer) {
 
-        if (node.isTerminalNode() || depth == 0){
-            int value = EvaluationFunction.evaluate(node.getState());
+        if (node.isTerminalNode() || depth == 0 || node.getState().possibleNextStates() == 0){
+            int value = EvaluationFunction.evaluate(node.getState(), maxPlayer);
             node.setScore(value);
             return value;
         }
@@ -37,20 +36,30 @@ public class Tree {
 
             for (int i = 0; i < node.getChildren().size(); i++){
 
-                if (node.getChildren().get(i) == null){
+                Node child = node.getChildren().get(i);
+
+                if (child == null){
                     continue;
                 }
 
-                value = Math.max(value, alphaBeta(node.getChildren().get(i), depth - 1, alpha, beta, false));
+                boolean trulyMaxPlayer = child.getState().getPlayer().getPieceColour() == Colour.WHITE;
 
-                if (value >= beta){
+                value = Math.max(value, alphaBeta(child, depth - 1, alpha, beta, trulyMaxPlayer));
+
+                alpha = Math.max(alpha, value);
+
+                //value
+                if (alpha >= beta){
+                    node.setBestChild(child);
                     break;
                 }
 
-                alpha = Math.max(alpha, value);
+                //alpha = Math.max(alpha, value);
+                node.setBestChild(child);
+                node.setScore(value);
             }
 
-            node.setScore(value);
+            //node.getChildren().get(i).setScore(value);
             return value;
 
         } else {
@@ -59,20 +68,31 @@ public class Tree {
 
             for (int i = 0; i < node.getChildren().size(); i++){
 
-                if (node.getChildren().get(i) == null){
+                Node child = node.getChildren().get(i);
+
+                if (child == null){
                     continue;
                 }
 
-                value = Math.min(value, alphaBeta(node.getChildren().get(i), depth - 1, alpha, beta, true));
+                boolean trulyMaxPlayer = child.getState().getPlayer().getPieceColour() == Colour.WHITE;
 
-                if (value <= alpha){
+                value = Math.min(value, alphaBeta(child, depth - 1, alpha, beta, trulyMaxPlayer));
+
+                beta = Math.min(beta, value);
+
+                //value
+                if (beta <= alpha){
+                    node.setBestChild(child);
                     break;
                 }
 
-                beta = Math.min(beta, value);
+
+                node.setBestChild(child);
+                node.setScore(value);
+                //beta = Math.min(beta, value);
             }
 
-            node.setScore(value);
+            //node.setScore(value);
             return value;
         }
 
@@ -81,42 +101,48 @@ public class Tree {
     public Move getBestMove(){
 
         Node n = this.root.getChildren().get(0);
+        Player player = this.root.getState().getPlayer();
 
-        for (int i = 1; i < this.root.getChildren().size(); i++){
+        for (int i = 0; i < this.root.getChildren().size(); i++){
+
             Node child = this.root.getChildren().get(i);
 
             if (child == null){
-                continue;
+                break;
             }
 
-            if (child.getScore() > n.getScore()){
-                n = child;
+            if (player.getPieceColour() == Colour.WHITE){
+
+                if (child.getScore() > n.getScore()){
+                    n = child;
+                }
+            } else {
+
+                if (child.getScore() < n.getScore()){
+                    n = child;
+                }
             }
+
         }
 
         return n.getState().getBoard().getLastMovePlayed();
     }
 
-    private void growTree(Node node, int depth, boolean ordered){
+    private void growTree(Node node, int depth){
 
         State state = node.getState();
 
-        if (state.isTerminalState() || depth == 0 || state.possibleNextStates() == 0){
+        if (state.isTerminalState() || depth == 0){
             return;
         }
 
         for (State nextState : state.getNextStates()){
             Node n = new Node(nextState);
-            node.addNode(n, nextState.getPlayer().getPieceColour(), ordered);
-            n.setParent(node);
+            node.addNode(n);
 
-            growTree(n , depth - 1, ordered);
+            growTree(n , depth - 1);
         }
 
     }
 
-    @Override
-    public String toString(){
-        return this.root.getChildren().get(1).getChildren().get(0).toString();
-    }
 }

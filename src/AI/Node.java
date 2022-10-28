@@ -2,18 +2,20 @@ package AI;
 
 import Enums.Colour;
 
-public class Node implements Comparable<Node>{
+public class Node {
 
     private State state;
     private Node parent;
     private Vector children;
     private int score;
+    private Node bestChild;
 
     public Node (State state, Vector children, Node parent){
         this.state = state;
         this.children = children;
         this.parent = parent;
         this.score = 0;
+        this.bestChild = null;
     }
 
     public Node (State state){
@@ -26,6 +28,14 @@ public class Node implements Comparable<Node>{
 
     public Node getParent(){
         return this.parent;
+    }
+
+    public void setBestChild(Node child){
+        this.bestChild = child;
+    }
+
+    public Node getBestChild(){
+        return this.bestChild;
     }
 
     public void setScore(int score){
@@ -54,58 +64,50 @@ public class Node implements Comparable<Node>{
 
     private void addChildLast(Node child){this.children.addLast(child);}
 
-    public void addNode(Node node, Colour playerColour, boolean orderMoves){
+    public void addNode(Node node){
 
-        if (this.children.isEmpty()){
-            addChildLast(node);
-            return;
-        }
-
-        if (orderMoves){
-
-            int nodeScore = node.getState().evaluateState();
-            int lastChildScore = this.children.getLast().getState().evaluateState();
-
-            if (nodeScore > lastChildScore){
-
-                if (playerColour == Colour.WHITE){
-                    addChildLast(node);
-                    return;
-                }
-
-                this.children.addBeforeLast(node);
-
-            } else {
-
-                if (playerColour == Colour.WHITE){
-                    this.children.addBeforeLast(node);
-                    return;
-                }
-
-                addChildLast(node);
-            }
-
-            return;
-        }
+//        if (this.children.isEmpty()){
+//            addChildLast(node);
+//            return;
+//        }
+//
+//        if (orderMoves){
+//
+//            int nodeScore = node.getState().evaluateState();
+//            int lastChildScore = this.children.getLast().getState().evaluateState();
+//
+//            node.setScore(nodeScore);
+//            this.children.getLast().setScore(lastChildScore);
+//
+//            if (nodeScore > lastChildScore){
+//
+//                if (playerColour == Colour.WHITE){
+//                    addChildLast(node);
+//                    return;
+//                }
+//
+//                this.children.addBeforeLast(node);
+//                return;
+//
+//            } else {
+//
+//                if (playerColour == Colour.WHITE){
+//                    this.children.addBeforeLast(node);
+//                    return;
+//                }
+//
+//                addChildLast(node);
+//                return;
+//            }
+//
+//        }
 
         addChildLast(node);
-    }
-
-    /**
-     * Compares this object with the specified object for order.  Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.
-     * @param o the object to be compared.
-     * @return a negative integer, zero, or a positive integer as this object
-     * is less than, equal to, or greater than the specified object.
-     */
-    @Override
-    public int compareTo(Node o) {
-        return this.state.compareTo(o.getState());
+        node.setParent(this);
     }
 
     @Override
     public String toString(){
-        return this.state.toString();
+        return this.state.getBoard().getLastMovePlayed().toString()+"/score: "+this.score;
     }
 }

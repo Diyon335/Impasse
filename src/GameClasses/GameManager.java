@@ -20,8 +20,8 @@ public class GameManager {
     private final GameBoard board;
     private Player white, black, turn;
 
-    private boolean pieceHeld = false;
-    private Piece pieceToMove = null;
+    private boolean pieceHeld;
+    private Piece pieceToMove;
     private GUI gui;
 
 
@@ -30,6 +30,9 @@ public class GameManager {
 
         this.white = this.board.getWhite();
         this.black = this.board.getBlack();
+
+        this.pieceHeld = false;
+        this.pieceToMove = null;
 
         if (p1IsAI){
             this.white.setAsAI();
@@ -88,27 +91,29 @@ public class GameManager {
 
         if (move != null && move.canBeApplied()){
 
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            //
-            System.out.println("moving: "+move.getMovingPiece());
-            System.out.println("actual pos: "+ Arrays.toString(move.getMovingPiece().getPosition()));
-            System.out.println("from: "+move.getFrom());
-            System.out.println("to: "+move.getTo());
-            //
-
             System.out.println(move);
-            move.movePiece(this);
+
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+
+            move.movePiece(this.board);
+
             registerTurn();
 
+
         } else {
+            System.out.println(move);
+            System.out.println(this.board);
+            for (Piece p : getTurn().getPieces()){
+                System.out.println(p + ", "+p.getLegalMoves());
+            }
             System.out.println("You cannot move here");
         }
     }
+
 
     private void registerTurn(){
 
@@ -125,18 +130,18 @@ public class GameManager {
 
         if (this.board.hasSingleInFurthestRow(getTurn()) && getTurn().hasFreeSingles()){
 
-            for (Piece piece : getTurn().getPieces()){
-
-                if (piece instanceof Single){
-                    if (!((Single) piece).canCrown()){
-                        piece.clearMoves();
-                    }
-                }
-
-                if (piece instanceof DoublePiece){
-                    piece.clearMoves();
-                }
-            }
+//            for (Piece piece : getTurn().getPieces()){
+//
+//                if (piece instanceof Single){
+//                    if (!((Single) piece).canCrown()){
+//                        piece.clearMoves();
+//                    }
+//                }
+//
+//                if (piece instanceof DoublePiece){
+//                    piece.clearMoves();
+//                }
+//            }
 
             System.out.println(getTurn().getPieceColour().toString()+" should perform a crown");
 
@@ -144,30 +149,33 @@ public class GameManager {
                 moveAI();
             }
 
+            //makeRandomMove(getTurn());
+
             return;
 
         }
 
         if (this.board.hasDoublesInNearestRow(getTurn())){
 
-            for (Piece piece : getTurn().getPieces()){
-
-                if (piece instanceof Single){
-                    piece.clearMoves();
-                }
-
-                if (piece instanceof DoublePiece){
-                    if(!((DoublePiece) piece).canBearOff()){
-                        piece.clearMoves();
-                    }
-                }
-            }
+//            for (Piece piece : getTurn().getPieces()){
+//
+//                if (piece instanceof Single){
+//                    piece.clearMoves();
+//                }
+//
+//                if (piece instanceof DoublePiece){
+//                    if(!((DoublePiece) piece).canBearOff()){
+//                        piece.clearMoves();
+//                    }
+//                }
+//            }
 
             System.out.println(getTurn().getPieceColour().toString()+" should perform a bear off");
 
             if (getTurn().isAI()){
                 moveAI();
             }
+            //makeRandomMove(getTurn());
 
             return;
         }
@@ -227,10 +235,10 @@ public class GameManager {
             this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("G1"), this),this.black);
 
 
-            //this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("G7"), this), this.white);
-//            this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("A1"), this),this.black);
+//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("G7"), this), this.white);
+//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("A3"), this),this.black);
 //            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("C1"), this),this.white);
-            //this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("D2"), this), this.black);
+//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("D2"), this), this.black);
 
 
             for (Piece piece : this.white.getPieces()){
@@ -247,12 +255,49 @@ public class GameManager {
     }
 
     private void moveAI(){
-        GameBoard boardCopy = GameBoard.createCopy(this.board);
-        State s = new State(boardCopy, this.board.getTurn(), getOpponent());
-        Tree tree = new Tree(s, 4, false);
 
-        tree.alphaBeta(tree.getRoot(), 2, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
-        applyMove(tree.getBestMove());
+        int rowsCols = this.board.getSize();
+        GameBoard boardCopy = new GameBoard(rowsCols, rowsCols);
+        boardCopy.copyBoardFrom(this.board);
+
+        System.out.println(this.board);
+        System.out.println(this.board.getPieces());
+        System.out.println(boardCopy);
+        System.out.println(this.board.getTurn().getAmountOfPieces());
+        System.out.println(boardCopy.getTurn().getAmountOfPieces());
+
+        State s = new State(boardCopy);
+
+        for (Piece p : getTurn().getPieces()){
+            System.out.println(p+": "+p.getLegalMoves());
+        }
+        System.out.println(s.getMoves());
+        System.out.println(s.getBoard());
+        Tree tree = new Tree(s, 2);
+
+        boolean maxPlayer = this.board.getTurn().getPieceColour() == Colour.WHITE;
+        tree.alphaBeta(tree.getRoot(), 2, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
+
+        System.out.println(tree.getRoot().getChildren());
+
+        Move m = tree.getBestMove();
+
+        System.out.println(m);
+
+
+        Piece p = getTurn().getPieceFromCopy(m.getMovingPiece());
+
+//        System.out.println(m);
+//        System.out.println(getTurn().getPieceColour());
+//        System.out.println(p);
+//        System.out.println(Arrays.toString(m.getMovingPiece().getPosition()));
+//        System.out.println(getTurn().getPieces());
+//        for (Piece piece : getTurn().getPieces()){
+//            System.out.println(Arrays.toString(piece.getPosition()));
+//        }
+
+
+        applyMove(p.getMove(m.getFrom(), m.getTo()));
     }
 
 
@@ -260,11 +305,11 @@ public class GameManager {
         System.out.println(this.turn.getPieceColour().toString()+" to move");
 
         if (getTurn().isAI()){
-            makeRandomFirstMove(getTurn());
+            makeRandomMove(getTurn());
         }
     }
 
-    public void makeRandomFirstMove(Player player){
+    public void makeRandomMove(Player player){
         List<Move> allMoves = new ArrayList<>();
 
         for (Piece piece : player.getPieces()){

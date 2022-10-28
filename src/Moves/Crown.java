@@ -27,7 +27,6 @@ public class Crown extends Move {
     public void movePiece(GameManager gameManager) {
 
         Player player = gameManager.getTurn();
-
         DoublePiece newDouble = new DoublePiece(player.getPieceColour(), player, new int[]{getTo().getRow(), getTo().getCol()}, gameManager);
 
         gameManager.getBoard().removePiece(getFrom().getPiece(), player);
@@ -36,7 +35,6 @@ public class Crown extends Move {
 
         getFrom().setPiece(null);
         getTo().setPiece(newDouble);
-
     }
 
     @Override

@@ -44,6 +44,10 @@ public class DoublePiece extends Piece {
     public void updateLegalMoves(GameBoard board) {
         clearMoves();
 
+        if (board.hasSingleInFurthestRow(getPlayer())){
+            return;
+        }
+
         //Must bear off
         if(board.hasDoublesInNearestRow(getPlayer())){
 

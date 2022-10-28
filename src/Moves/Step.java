@@ -29,8 +29,8 @@ public class Step extends Move {
     @Override
     public void movePiece(GameManager gameManager) {
 
-        getFrom().setPiece(null);
-        getTo().setPiece(getMovingPiece());
+        gameManager.getBoard().getSpace(getFrom().getRow(), getFrom().getCol()).setPiece(null);
+        gameManager.getBoard().getSpace(getTo().getRow(), getTo().getCol()).setPiece(getMovingPiece());
         getMovingPiece().setPosition(getTo().getRow(), getTo().getCol());
 
     }

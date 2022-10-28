@@ -45,10 +45,19 @@ public class Single extends Piece {
 
         clearMoves();
 
+        if (board.hasDoublesInNearestRow(getPlayer())){
+            return;
+        }
+
         //Must crown
         if (board.hasSingleInFurthestRow(getPlayer())){
 
             for (Piece piece : board.getSinglesInFurthestRow(getPlayer())){
+
+                if (piece.compareTo(this) == 0){
+                    continue;
+                }
+
                 Space from = board.getSpace(getPosition());
                 Space to = board.getSpace(piece.getPosition());
                 addMove(new Crown(this, from , to));
@@ -89,6 +98,7 @@ public class Single extends Piece {
     public int getCount() {
         return 1;
     }
+
 
     @Override
     public String toString(){

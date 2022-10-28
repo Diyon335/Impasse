@@ -53,7 +53,7 @@ public class Space implements Comparable<Space> {
     @Override
     public int compareTo(Space space) {
 
-        if (Arrays.equals(this.position, space.getPosition())){
+        if (space.getRow() - this.getRow() == 0 && space.getCol() - this.getCol() == 0){
             return 0;
         }
 

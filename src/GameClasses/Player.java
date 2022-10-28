@@ -81,11 +81,25 @@ public class Player {
     }
 
     public void removePiece(Piece piece){
-        if (hasPiece(piece)){
-            this.pieces.remove(piece);
-            this.amountOfPieces-=piece.getCount();
+//        if (hasPiece(piece)){
+//
+//        }
+
+        this.pieces.remove(piece);
+        this.amountOfPieces-=piece.getCount();
+
+    }
+
+    public Piece getPieceFromCopy(Piece piece){
+
+        for (Piece p : this.pieces){
+
+            if (p.compareTo(piece) == 0){
+                return p;
+            }
         }
 
+        return null;
     }
 
     public boolean hasPiece(Piece piece){

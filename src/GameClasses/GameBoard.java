@@ -1,10 +1,13 @@
 package GameClasses;
 
+import AI.State;
 import AbstractClasses.Move;
 import AbstractClasses.Piece;
 import Enums.Colour;
+import Moves.Impasse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GameBoard {
 
@@ -51,8 +54,14 @@ public class GameBoard {
         this.turn = this.turn.getPieceColour() == Colour.WHITE ? this.black : this.white;
     }
 
+    public void setTurn(Player player){this.turn = player;}
+
     public Player getTurn(){
         return this.turn;
+    }
+
+    public Player getOpponent(){
+        return getTurn().getPieceColour() == Colour.WHITE ? this.black : this.white;
     }
 
     public Player getWhite(){
@@ -89,9 +98,7 @@ public class GameBoard {
 
     public void addPiece(Piece piece, Player player){
 
-        if (player != null){
-            player.addPiece(piece);
-        }
+        player.addPiece(piece);
 
         if (piece.getColour() == Colour.WHITE){
             this.whitePieces+=piece.getCount();
@@ -106,9 +113,7 @@ public class GameBoard {
 
     public void removePiece(Piece piece, Player player){
 
-        if (player != null){
-            player.removePiece(piece);
-        }
+        player.removePiece(piece);
 
         if (piece.getColour() == Colour.WHITE){
             this.whitePieces-=piece.getCount();
@@ -190,34 +195,34 @@ public class GameBoard {
         return player.getPieceColour() == Colour.WHITE ? 0 : getSize() - 1;
     }
 
-    public static GameBoard createCopy(GameBoard board){
+    public void copyBoardFrom(GameBoard board){
 
-        GameBoard toReturn = new GameBoard(board.getSize() , board.getSize());
-
+        //todo doubles not getting copied and set. why?
         for (Piece piece : board.getPieces()){
 
-            Player player = piece.getPlayer().getPieceColour() == Colour.WHITE ? toReturn.getWhite() : toReturn.getBlack();
+            Player player = piece.getColour() == Colour.WHITE ? this.white : this.black;
 
             if (piece instanceof Single){
 
-                Single s = new Single(piece.getColour(), player, new int[]{piece.getRow(), piece.getCol()});
-                toReturn.getSpace(s.getRow(),s.getCol()).setPiece(s);
+                Single single = new Single(piece.getColour(), player, new int[]{piece.getRow(), piece.getCol()});
 
-                toReturn.addPiece(s, player);
-                s.updateLegalMoves(toReturn);
+                getSpace(piece.getRow(), piece.getCol()).setPiece(single);
+                addPiece(single, player);
             }
 
             if (piece instanceof DoublePiece){
-
                 DoublePiece d = new DoublePiece(piece.getColour(), player, new int[]{piece.getRow(), piece.getCol()});
-                toReturn.getSpace(d.getRow(),d.getCol()).setPiece(d);
 
-                toReturn.addPiece(d, player);
-                d.updateLegalMoves(toReturn);
+                getSpace(piece.getRow(), piece.getCol()).setPiece(d);
+                addPiece(d, player);
             }
         }
 
-        return toReturn;
+        for (Piece piece : this.pieces){
+            piece.updateLegalMoves(this);
+        }
+
+        setTurn(board.getTurn().getPieceColour() == Colour.WHITE ? this.white : this.black);
     }
 
     @Override
