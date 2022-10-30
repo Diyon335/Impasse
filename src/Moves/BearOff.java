@@ -12,6 +12,7 @@ public class BearOff extends Move {
         super(movingPiece, from, to);
     }
 
+
     @Override
     public boolean isBasicMove() {
         return false;

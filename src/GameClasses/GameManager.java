@@ -24,9 +24,9 @@ public class GameManager {
     private boolean pieceHeld;
     private Piece pieceToMove;
     private GUI gui;
-    private boolean isFirstMove;
+    private boolean isFirstMove, orderMoves;
 
-    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI){
+    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI, boolean orderMoves){
         this.board = new GameBoard(rows, columns);
 
         this.white = this.board.getWhite();
@@ -35,6 +35,7 @@ public class GameManager {
         this.isFirstMove = true;
         this.pieceHeld = false;
         this.pieceToMove = null;
+        this.orderMoves = orderMoves;
 
         if (p1IsAI){
             this.white.setAsAI();
@@ -111,10 +112,11 @@ public class GameManager {
 
             System.out.println(getTurn().getPieceColour().toString()+" should perform a crown");
 
-            if (getTurn().isAI()){
-                applyMove(makeRandomMove(getTurn()));
-                registerTurn();
-            }
+//            if (getTurn().isAI()){
+//                applyMove(makeRandomMove(getTurn()));
+//                registerTurn();
+//            }
+            play();
 
             return;
         }
@@ -204,7 +206,7 @@ public class GameManager {
         boardCopy.copyBoardFrom(this.board);
 
         State s = new State(boardCopy);
-        Tree tree = new Tree(s, 5);
+        Tree tree = new Tree(s, 5, this.orderMoves);
 
         boolean maxPlayer = this.board.getTurn().getPieceColour() == Colour.WHITE;
         tree.alphaBeta(tree.getRoot(), 5, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);

@@ -9,9 +9,24 @@ import GameClasses.Player;
 import GameClasses.Single;
 import Moves.*;
 
+/**
+ * Class for the evaluation function
+ */
 public class EvaluationFunction {
 
 
+    /**
+     * The evaluation function that evaluates a state depending on the player
+     *
+     * Terminal states are much more desired, therefore given the highest values.
+     * Moves that bring singles to the furthest row, and doubles to the nearest row are given more weight
+     * Transposes are given a slightly higher weight - much more if the resulting transpose permits a bear off
+     * States that result in impasses are also given a high weight
+     *
+     * @param state State to be evaluated
+     * @param maxPlayer Boolean to indicate if max or min player
+     * @return Returns an integer that represents the score of the state after evaluation
+     */
     public static int evaluate(State state, boolean maxPlayer){
 
         if (state.isTerminalState()){

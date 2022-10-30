@@ -10,11 +10,11 @@ public class Tree {
     private Node root;
     private int depth;
 
-    public Tree(State state, int depth){
+    public Tree(State state, int depth, boolean orderMoves){
         this.root = new Node(state);
         this.depth = depth;
 
-        growTree(this.root, depth);
+        growTree(this.root, depth, orderMoves);
     }
 
     public Node getRoot(){
@@ -48,18 +48,13 @@ public class Tree {
 
                 alpha = Math.max(alpha, value);
 
-                //value
                 if (alpha >= beta){
-                    node.setBestChild(child);
                     break;
                 }
 
-                //alpha = Math.max(alpha, value);
-                node.setBestChild(child);
                 node.setScore(value);
             }
 
-            //node.getChildren().get(i).setScore(value);
             return value;
 
         } else {
@@ -80,19 +75,15 @@ public class Tree {
 
                 beta = Math.min(beta, value);
 
-                //value
                 if (beta <= alpha){
-                    node.setBestChild(child);
+
                     break;
                 }
 
 
-                node.setBestChild(child);
                 node.setScore(value);
-                //beta = Math.min(beta, value);
             }
 
-            //node.setScore(value);
             return value;
         }
 
@@ -128,7 +119,7 @@ public class Tree {
         return n.getState().getBoard().getLastMovePlayed();
     }
 
-    private void growTree(Node node, int depth){
+    private void growTree(Node node, int depth, boolean orderMoves){
 
         State state = node.getState();
 
@@ -138,9 +129,9 @@ public class Tree {
 
         for (State nextState : state.getNextStates()){
             Node n = new Node(nextState);
-            node.addNode(n);
+            node.addNode(n, orderMoves);
 
-            growTree(n , depth - 1);
+            growTree(n , depth - 1, orderMoves);
         }
 
     }
