@@ -50,7 +50,9 @@ public class Single extends Piece {
         }
 
         //Must crown
-        if (board.hasSingleInFurthestRow(getPlayer())){
+        if (board.hasSingleInFurthestRow(getPlayer()) && getPlayer().hasFreeSingles()){
+
+
 
             for (Piece piece : board.getSinglesInFurthestRow(getPlayer())){
 

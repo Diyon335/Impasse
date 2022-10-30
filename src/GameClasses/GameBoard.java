@@ -9,7 +9,7 @@ import Moves.Impasse;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class GameBoard {
+public class GameBoard implements Comparable<GameBoard>{
 
     private Space[][] board;
     private int rows, cols;
@@ -156,9 +156,29 @@ public class GameBoard {
 
         ArrayList<Piece> singles = new ArrayList<>();
 
-        for (Space space : this.board[getFurthestRow(player)]){
-            if ((space.getPiece() instanceof Single) && player.hasPiece(space.getPiece())){
-                singles.add(space.getPiece());
+        int row = getFurthestRow(player);
+        for (int col = 0; col < getSize(); col++){
+            Piece piece = getSpace(row, col).getPiece();
+
+            if (piece == null){
+                continue;
+            }
+
+            if ((piece instanceof Single) && player.hasPiece(piece)){
+                singles.add(piece);
+            }
+        }
+
+        return singles;
+    }
+
+    public ArrayList<Piece> getFreeSingles(Player player){
+
+        ArrayList<Piece> singles = new ArrayList<>();
+
+        for (Piece p : player.getPieces()){
+            if (p instanceof Single){
+                singles.add(p);
             }
         }
 
@@ -173,9 +193,16 @@ public class GameBoard {
 
         ArrayList<Piece> doubles = new ArrayList<>();
 
-        for (Space space : this.board[getNearestRow(player)]){
-            if ((space.getPiece() instanceof DoublePiece) && player.hasPiece(space.getPiece())){
-                doubles.add(space.getPiece());
+        int row = getNearestRow(player);
+        for (int col = 0; col < getSize(); col++){
+            Piece piece = getSpace(row, col).getPiece();
+
+            if (piece == null){
+                continue;
+            }
+
+            if ((piece instanceof DoublePiece) && player.hasPiece(piece)){
+                doubles.add(piece);
             }
         }
 
@@ -197,32 +224,43 @@ public class GameBoard {
 
     public void copyBoardFrom(GameBoard board){
 
-        //todo doubles not getting copied and set. why?
-        for (Piece piece : board.getPieces()){
+        for (int i = 0; i< getSize(); i++){
+            for (int j = 0; j < getSize(); j++){
 
-            Player player = piece.getColour() == Colour.WHITE ? this.white : this.black;
+                Piece piece = board.getSpace(i,j).getPiece();
 
-            if (piece instanceof Single){
+                if (piece == null){
+                    continue;
+                }
 
-                Single single = new Single(piece.getColour(), player, new int[]{piece.getRow(), piece.getCol()});
+                Player player = piece.getColour() == Colour.WHITE ? this.white : this.black;
 
-                getSpace(piece.getRow(), piece.getCol()).setPiece(single);
-                addPiece(single, player);
-            }
+                if (piece instanceof Single){
 
-            if (piece instanceof DoublePiece){
-                DoublePiece d = new DoublePiece(piece.getColour(), player, new int[]{piece.getRow(), piece.getCol()});
+                    Single single = new Single(piece.getColour(), player, new int[]{i, j});
 
-                getSpace(piece.getRow(), piece.getCol()).setPiece(d);
-                addPiece(d, player);
+                    getSpace(i, j).setPiece(single);
+                    single.setPosition(i, j);
+                    addPiece(single, player);
+                }
+
+                if (piece instanceof DoublePiece){
+                    DoublePiece d = new DoublePiece(piece.getColour(), player, new int[]{i, j});
+
+                    getSpace(i, j).setPiece(d);
+                    d.setPosition(i, j);
+                    addPiece(d, player);
+                }
             }
         }
 
-        for (Piece piece : this.pieces){
-            piece.updateLegalMoves(this);
-        }
+        Player p = board.getTurn().getPieceColour() == Colour.WHITE ? this.white : this.black;
+        setTurn(p);
+    }
 
-        setTurn(board.getTurn().getPieceColour() == Colour.WHITE ? this.white : this.black);
+    public void makeStateDesirable(){
+        this.whitePieces = 0;
+        this.blackPieces = 0;
     }
 
     @Override
@@ -243,5 +281,31 @@ public class GameBoard {
         }
 
         return s.toString();
+    }
+
+    @Override
+    public int compareTo(GameBoard gameBoard) {
+
+        for (int i = 0; i < this.rows ; i++){
+            for (int j = 0; j<this.cols; j++){
+
+                Piece p1 = getSpace(i,j).getPiece();
+                Piece p2 = gameBoard.getSpace(i,j).getPiece();
+
+                if (p1 == null && p2 == null){
+                    continue;
+                }
+
+                assert p1 != null;
+                assert p2 != null;
+                if (p1.compareTo(p2) == 0){
+                    continue;
+                }
+
+                return -1;
+            }
+        }
+
+        return 0;
     }
 }

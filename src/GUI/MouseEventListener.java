@@ -27,7 +27,10 @@ public class MouseEventListener extends MouseAdapter {
             Piece piece = getGameManager().getPieceToMove();
             Space from = getGameManager().getBoard().getSpace(piece.getPosition());
 
-            getGameManager().applyMove(piece.getMove(from,to));
+            if ( getGameManager().applyMove(piece.getMove(from,to)) ){
+                getGameManager().registerTurn();
+            }
+
             getGameManager().setPieceHeld(false);
             getGameManager().setPieceToMove(null);
 

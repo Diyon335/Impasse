@@ -84,9 +84,7 @@ public abstract class Piece implements Comparable<Piece>{
     }
 
     public void clearMoves(){
-        if (this.moves.size() > 0){
-            this.moves.clear();
-        }
+        this.moves.clear();
     }
 
     public boolean isWhite(){

@@ -64,45 +64,45 @@ public class Node {
 
     private void addChildLast(Node child){this.children.addLast(child);}
 
-    public void addNode(Node node){
+    public void addNode(Node node, boolean orderMoves){
 
-//        if (this.children.isEmpty()){
-//            addChildLast(node);
-//            return;
-//        }
-//
-//        if (orderMoves){
-//
-//            int nodeScore = node.getState().evaluateState();
-//            int lastChildScore = this.children.getLast().getState().evaluateState();
-//
-//            node.setScore(nodeScore);
-//            this.children.getLast().setScore(lastChildScore);
-//
-//            if (nodeScore > lastChildScore){
-//
-//                if (playerColour == Colour.WHITE){
-//                    addChildLast(node);
-//                    return;
-//                }
-//
-//                this.children.addBeforeLast(node);
-//                return;
-//
-//            } else {
-//
-//                if (playerColour == Colour.WHITE){
-//                    this.children.addBeforeLast(node);
-//                    return;
-//                }
-//
-//                addChildLast(node);
-//                return;
-//            }
-//
-//        }
+        if (orderMoves){
 
-        addChildLast(node);
+            if (this.children.isEmpty()){
+                addChildLast(node);
+                return;
+            }
+
+            boolean maxPlayer = node.getState().getPlayer().getPieceColour() != Colour.WHITE;
+
+            int nodeScore = EvaluationFunction.evaluate(node.getState(), maxPlayer);
+            int firstChildScore = EvaluationFunction.evaluate(this.children.getFirst().getState(), maxPlayer);
+
+            if (maxPlayer){
+
+                if (nodeScore > firstChildScore){
+
+                    addChildFirst(node);
+
+                } else {
+                    addChildLast(node);
+                }
+
+            } else {
+
+                if (nodeScore < firstChildScore){
+
+                    addChildFirst(node);
+
+                } else {
+                    addChildLast(node);
+                }
+            }
+
+        } else {
+            addChildLast(node);
+        }
+
         node.setParent(this);
     }
 

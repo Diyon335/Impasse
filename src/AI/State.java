@@ -9,6 +9,7 @@ import Moves.Crown;
 import Moves.Impasse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,11 +26,16 @@ public class State {
         this.player = board.getTurn();
         this.opponent = board.getOpponent();
 
+        for (Piece p : this.board.getPieces()){
+            p.updateLegalMoves(this.board);
+        }
+
         this.moves = new ArrayList<>();
 
         if (this.player.isAtImpasse()){
 
             for (Piece piece : this.player.getPieces()){
+
                 piece.clearMoves();
                 Space s = this.board.getSpace(piece.getRow(), piece.getCol());
                 Impasse i = new Impasse(piece, s , s);
@@ -64,21 +70,19 @@ public class State {
 
         for (Move move : this.moves){
 
-            if (move.canBeApplied()){
+            GameBoard boardCopy = new GameBoard(this.board.getSize(), this.board.getSize());
+            boardCopy.copyBoardFrom(this.board);
 
-                GameBoard boardCopy = new GameBoard(this.board.getSize(), this.board.getSize());
-                boardCopy.copyBoardFrom(this.board);
+            Player player = boardCopy.getTurn();
+            Player opponent = boardCopy.getOpponent();
 
-                Player player = boardCopy.getTurn();
-                Player opponent = boardCopy.getOpponent();
+            move.movePiece(boardCopy);
 
-                move.movePiece(boardCopy);
+            for (Piece piece : boardCopy.getPieces()){
+                piece.updateLegalMoves(boardCopy);
+            }
 
-                for (Piece piece : boardCopy.getPieces()){
-                    piece.updateLegalMoves(boardCopy);
-                }
-
-                if (boardCopy.hasSingleInFurthestRow(player) && player.hasFreeSingles()){
+            if (boardCopy.hasSingleInFurthestRow(player) && player.hasFreeSingles()){
 
 //                    for (Piece piece : player.getPieces()){
 //
@@ -92,13 +96,13 @@ public class State {
 //                            piece.clearMoves();
 //                        }
 //                    }
+//
+                //boardCopy.makeStateDesirable();
+                toReturn.add(new State(boardCopy));
+                continue;
+            }
 
-                    boardCopy.setTurn(player);
-                    toReturn.add(new State(boardCopy));
-                    continue;
-                }
-
-                if (boardCopy.hasDoublesInNearestRow(player)){
+            if (boardCopy.hasDoublesInNearestRow(player)){
 
 //                    for (Piece piece : player.getPieces()){
 //
@@ -112,16 +116,15 @@ public class State {
 //                            }
 //                        }
 //                    }
-
-                    boardCopy.setTurn(player);
-                    toReturn.add(new State(boardCopy));
-                    continue;
-
-                }
-
-                boardCopy.setTurn(opponent);
+//
+                //boardCopy.makeStateDesirable();
                 toReturn.add(new State(boardCopy));
+                continue;
+
             }
+
+            boardCopy.changeTurn();
+            toReturn.add(new State(boardCopy));
         }
 
         return toReturn;

@@ -13,6 +13,7 @@ import Moves.Step;
 import Moves.Transpose;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DoublePiece extends Piece {
 
@@ -44,7 +45,7 @@ public class DoublePiece extends Piece {
     public void updateLegalMoves(GameBoard board) {
         clearMoves();
 
-        if (board.hasSingleInFurthestRow(getPlayer())){
+        if (board.hasSingleInFurthestRow(getPlayer()) && getPlayer().hasFreeSingles()){
             return;
         }
 
@@ -53,11 +54,13 @@ public class DoublePiece extends Piece {
 
             for (Piece piece : board.getDoublesInNearestRow(getPlayer())){
 
-                //Space from = getGameManager().getSpaceAtIndex(piece.getPosition());
-                //Space to = getGameManager().getSpaceAtIndex(piece.getPosition());
+                if (piece.compareTo(this) != 0){
+                    continue;
+                }
 
                 Space from = board.getSpace(piece.getRow(), piece.getCol());
-                addMove(new BearOff(this, from, from));
+                Space to = board.getSpace(piece.getRow(), piece.getCol());
+                addMove(new BearOff(this, from, to));
             }
 
             return;

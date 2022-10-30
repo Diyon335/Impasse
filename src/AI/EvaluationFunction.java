@@ -4,22 +4,15 @@ import AbstractClasses.Move;
 import AbstractClasses.Piece;
 import Enums.Colour;
 import GameClasses.DoublePiece;
+import GameClasses.GameBoard;
 import GameClasses.Player;
 import GameClasses.Single;
-import Moves.BearOff;
-import Moves.Crown;
-import Moves.Impasse;
-import Moves.Transpose;
+import Moves.*;
 
 public class EvaluationFunction {
 
 
     public static int evaluate(State state, boolean maxPlayer){
-
-        //Player player = state.getPlayer();
-        //Player opponent = state.getOpponent();
-        //Player player = state.getOpponent();
-        //Player opponent = state.getPlayer();
 
         if (state.isTerminalState()){
 
@@ -31,26 +24,51 @@ public class EvaluationFunction {
         int furthestRow = maxPlayer ? 0 : 7;
         int nearestRow = maxPlayer ? 7 : 0;
 
-        int pieceDiff = maxPlayer ? 100 : -100;
+        int bearOffCrown = maxPlayer ? 100 : -100;
         int rowDiffWeight = maxPlayer ? 20 : -20;
+        int impasse = maxPlayer ? 500 : -500;
+
+        int transpose = maxPlayer ? 5 : -5;
 
         Move move = state.getBoard().getLastMovePlayed();
         Piece piece = move.getMovingPiece();
-        int toRow = move.getTo().getRow();
-        int rowDiff = (piece instanceof Single) ? Math.abs(toRow - furthestRow) : Math.abs(toRow - nearestRow);
 
-        rowDiff = Math.max(rowDiff, 1);
+        if ((move instanceof Slide) || (move instanceof Step)){
+            int toRow = move.getTo().getRow();
+            int rowDiff = (piece instanceof Single) ? Math.abs(toRow - furthestRow) : Math.abs(toRow - nearestRow);
 
-        score += rowDiffWeight / rowDiff;
+            if (rowDiff < 1){
+                score += bearOffCrown;
+            }
 
-        Move lastPlayedMove = state.getBoard().getLastMovePlayed();
+            rowDiff = Math.max(rowDiff, 1);
 
-        Player player = (lastPlayedMove instanceof Crown) || (lastPlayedMove instanceof BearOff) ? state.getPlayer() : state.getOpponent();
-        Player opponent = (lastPlayedMove instanceof Crown) || (lastPlayedMove instanceof BearOff) ? state.getOpponent() : state.getPlayer();
+            score += rowDiffWeight / rowDiff;
 
-        if (player.getAmountOfPieces() < opponent.getAmountOfPieces()){
-            score += pieceDiff;
+            GameBoard board = state.getBoard();
+            GameBoard boardCopy = new GameBoard(board.getSize(), board.getSize());
+            boardCopy.copyBoardFrom(board);
+            boardCopy.setTurn(boardCopy.getOpponent());
+
+            int moves = 0;
+            for (Piece p : boardCopy.getTurn().getPieces()){
+                moves += p.getLegalMoves().size();
+            }
+
+            if (moves == 0){
+                score += impasse;
+            }
         }
+
+        if (move instanceof Transpose){
+
+            if (move.getTo().getRow() == nearestRow){
+                score+=bearOffCrown;
+            }
+
+            score += transpose;
+        }
+
 
         return score;
     }

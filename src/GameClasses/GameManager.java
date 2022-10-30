@@ -8,6 +8,7 @@ import Enums.GameState;
 import Enums.Colour;
 import Exceptions.InvalidPiecePlacementException;
 import GUI.GUI;
+import Moves.BearOff;
 import Moves.Impasse;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class GameManager {
     private boolean pieceHeld;
     private Piece pieceToMove;
     private GUI gui;
-
+    private boolean isFirstMove;
 
     public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI){
         this.board = new GameBoard(rows, columns);
@@ -31,6 +32,7 @@ public class GameManager {
         this.white = this.board.getWhite();
         this.black = this.board.getBlack();
 
+        this.isFirstMove = true;
         this.pieceHeld = false;
         this.pieceToMove = null;
 
@@ -78,44 +80,21 @@ public class GameManager {
         return this.getBoard().getTurn().hasPiece(piece);
     }
 
-//    public void printBoard(){
-//        for (int i = 0; i <colLetters.length;i++){
-//            for (int j = 0;j<colLetters.length;j++){
-//                System.out.print(getSpaceAtIndex(new int[]{i,j})+" ");
-//            }
-//            System.out.println("");
-//        }
-//    }
-
-    public void applyMove(Move move){
+    public boolean applyMove(Move move){
 
         if (move != null && move.canBeApplied()){
 
             System.out.println(move);
-
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-
             move.movePiece(this.board);
-
-            registerTurn();
-
-
-        } else {
-            System.out.println(move);
-            System.out.println(this.board);
-            for (Piece p : getTurn().getPieces()){
-                System.out.println(p + ", "+p.getLegalMoves());
-            }
-            System.out.println("You cannot move here");
+            return true;
         }
+
+        System.out.println("You cannot move here");
+        return false;
     }
 
 
-    private void registerTurn(){
+    public void registerTurn(){
 
         this.gui.getPanel().drawBoard();
 
@@ -130,60 +109,30 @@ public class GameManager {
 
         if (this.board.hasSingleInFurthestRow(getTurn()) && getTurn().hasFreeSingles()){
 
-//            for (Piece piece : getTurn().getPieces()){
-//
-//                if (piece instanceof Single){
-//                    if (!((Single) piece).canCrown()){
-//                        piece.clearMoves();
-//                    }
-//                }
-//
-//                if (piece instanceof DoublePiece){
-//                    piece.clearMoves();
-//                }
-//            }
-
             System.out.println(getTurn().getPieceColour().toString()+" should perform a crown");
 
             if (getTurn().isAI()){
-                moveAI();
+                applyMove(makeRandomMove(getTurn()));
+                registerTurn();
             }
 
-            //makeRandomMove(getTurn());
-
             return;
-
         }
 
         if (this.board.hasDoublesInNearestRow(getTurn())){
 
-//            for (Piece piece : getTurn().getPieces()){
-//
-//                if (piece instanceof Single){
-//                    piece.clearMoves();
-//                }
-//
-//                if (piece instanceof DoublePiece){
-//                    if(!((DoublePiece) piece).canBearOff()){
-//                        piece.clearMoves();
-//                    }
-//                }
-//            }
-
             System.out.println(getTurn().getPieceColour().toString()+" should perform a bear off");
 
             if (getTurn().isAI()){
-                moveAI();
+                applyMove(makeRandomMove(getTurn()));
+                registerTurn();
             }
-            //makeRandomMove(getTurn());
 
             return;
         }
 
         this.board.changeTurn();
-
-        System.out.println(getTurn().getPieceColour().toString()+" to move");
-
+        this.turn = getTurn();
 
         if (getTurn().isAtImpasse()){
 
@@ -195,17 +144,11 @@ public class GameManager {
 
             System.out.println(getTurn().getPieceColour().toString()+" has reached an impasse, they may remove one piece");
 
-            if (getTurn().isAI()){
-                moveAI();
-            }
-
-        } else {
-            if (getTurn().isAI()){
-                moveAI();
-            }
+            play();
+            return;
         }
 
-
+        play();
     }
 
     public GameBoard getBoard() {
@@ -254,62 +197,46 @@ public class GameManager {
         }
     }
 
-    private void moveAI(){
+    private Move moveAI(){
 
         int rowsCols = this.board.getSize();
         GameBoard boardCopy = new GameBoard(rowsCols, rowsCols);
         boardCopy.copyBoardFrom(this.board);
 
-        System.out.println(this.board);
-        System.out.println(this.board.getPieces());
-        System.out.println(boardCopy);
-        System.out.println(this.board.getTurn().getAmountOfPieces());
-        System.out.println(boardCopy.getTurn().getAmountOfPieces());
-
         State s = new State(boardCopy);
-
-        for (Piece p : getTurn().getPieces()){
-            System.out.println(p+": "+p.getLegalMoves());
-        }
-        System.out.println(s.getMoves());
-        System.out.println(s.getBoard());
-        Tree tree = new Tree(s, 2);
+        Tree tree = new Tree(s, 5);
 
         boolean maxPlayer = this.board.getTurn().getPieceColour() == Colour.WHITE;
-        tree.alphaBeta(tree.getRoot(), 2, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
-
-        System.out.println(tree.getRoot().getChildren());
+        tree.alphaBeta(tree.getRoot(), 5, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
 
         Move m = tree.getBestMove();
-
-        System.out.println(m);
-
-
         Piece p = getTurn().getPieceFromCopy(m.getMovingPiece());
 
-//        System.out.println(m);
-//        System.out.println(getTurn().getPieceColour());
-//        System.out.println(p);
-//        System.out.println(Arrays.toString(m.getMovingPiece().getPosition()));
-//        System.out.println(getTurn().getPieces());
-//        for (Piece piece : getTurn().getPieces()){
-//            System.out.println(Arrays.toString(piece.getPosition()));
-//        }
-
-
-        applyMove(p.getMove(m.getFrom(), m.getTo()));
+        return p.getMove(m.getFrom(), m.getTo());
     }
 
 
     public void play(){
         System.out.println(this.turn.getPieceColour().toString()+" to move");
 
+        if (getTurn().isAI() && this.isFirstMove){
+            Move m = makeRandomMove(getTurn());
+            this.isFirstMove = false;
+
+            applyMove(m);
+            registerTurn();
+            return;
+        }
+
         if (getTurn().isAI()){
-            makeRandomMove(getTurn());
+            Move m = moveAI();
+
+            applyMove(m);
+            registerTurn();
         }
     }
 
-    public void makeRandomMove(Player player){
+    public Move makeRandomMove(Player player){
         List<Move> allMoves = new ArrayList<>();
 
         for (Piece piece : player.getPieces()){
@@ -327,7 +254,7 @@ public class GameManager {
             }
         }
 
-        applyMove(move);
+        return move;
     }
 
     public Player getOpponent(){
