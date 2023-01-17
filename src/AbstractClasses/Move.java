@@ -62,12 +62,6 @@ public abstract class Move implements Comparable<Move> {
     public abstract boolean canBeApplied();
 
     /**
-     * Moves the piece via the use of the game manager
-     * @param gameManager Game manager for the game
-     */
-    public abstract void movePiece(GameManager gameManager);
-
-    /**
      * Moves the piece on the board within a game
      * @param board Game board for the game
      */

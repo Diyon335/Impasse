@@ -4,15 +4,12 @@ import AI.State;
 import AI.Tree;
 import AbstractClasses.Move;
 import AbstractClasses.Piece;
-import Enums.GameState;
 import Enums.Colour;
 import Exceptions.InvalidPiecePlacementException;
 import GUI.GUI;
-import Moves.BearOff;
 import Moves.Impasse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -20,22 +17,25 @@ public class GameManager {
 
     private final GameBoard board;
     private Player white, black, turn;
+    private final int treeDepth, searchDepth;
 
     private boolean pieceHeld;
     private Piece pieceToMove;
     private GUI gui;
-    private boolean isFirstMove, orderMoves;
+    private boolean isFirstMove;
 
-    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI, boolean orderMoves){
+    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI, int treeDepth, int searchDepth){
         this.board = new GameBoard(rows, columns);
 
         this.white = this.board.getWhite();
         this.black = this.board.getBlack();
 
+        this.treeDepth = treeDepth;
+        this.searchDepth = searchDepth;
+
         this.isFirstMove = true;
         this.pieceHeld = false;
         this.pieceToMove = null;
-        this.orderMoves = orderMoves;
 
         if (p1IsAI){
             this.white.setAsAI();
@@ -112,10 +112,6 @@ public class GameManager {
 
             System.out.println(getTurn().getPieceColour().toString()+" should perform a crown");
 
-//            if (getTurn().isAI()){
-//                applyMove(makeRandomMove(getTurn()));
-//                registerTurn();
-//            }
             play();
 
             return;
@@ -179,13 +175,6 @@ public class GameManager {
             this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("F2"), this),this.black);
             this.board.addPiece(new DoublePiece(Colour.BLACK, this.black,stringToIndex("G1"), this),this.black);
 
-
-//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("G7"), this), this.white);
-//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("A3"), this),this.black);
-//            this.board.addPiece(new Single(Colour.WHITE, this.white,stringToIndex("C1"), this),this.white);
-//            this.board.addPiece(new Single(Colour.BLACK, this.black,stringToIndex("D2"), this), this.black);
-
-
             for (Piece piece : this.white.getPieces()){
                 this.board.getSpace(piece.getRow(), piece.getCol()).setPiece(piece);
             }
@@ -206,10 +195,10 @@ public class GameManager {
         boardCopy.copyBoardFrom(this.board);
 
         State s = new State(boardCopy);
-        Tree tree = new Tree(s, 5, this.orderMoves);
+        Tree tree = new Tree(s, this.treeDepth);
 
         boolean maxPlayer = this.board.getTurn().getPieceColour() == Colour.WHITE;
-        tree.alphaBeta(tree.getRoot(), 5, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
+        tree.alphaBeta(tree.getRoot(), this.searchDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
 
         Move m = tree.getBestMove();
         Piece p = getTurn().getPieceFromCopy(m.getMovingPiece());

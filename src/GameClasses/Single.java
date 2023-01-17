@@ -2,15 +2,12 @@ package GameClasses;
 
 import AbstractClasses.Piece;
 import AbstractClasses.Move;
-import GameClasses.Player;
-import GameClasses.Space;
 import Enums.Direction;
 import Enums.Colour;
 import Moves.Crown;
-import Moves.Step;
+import Moves.Slide;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Single extends Piece {
 
@@ -84,15 +81,40 @@ public class Single extends Piece {
 
         int[] newPositionLeft = {getPosition()[0] + leftForward.getRowChange() , getPosition()[1] + leftForward.getColChange()};
 
+        if (board.isOnBoard(newPositionLeft)){
+
+            Space to = board.getSpace(newPositionLeft);
+
+            if (to.getPiece() == null){
+
+                addMove(new Slide(this, from, to));
+            }
+        }
+
         int[] newPositionRight = {getPosition()[0] + rightForward.getRowChange() , getPosition()[1] + rightForward.getColChange()};
 
-        if (board.isOnBoard(newPositionLeft) && board.getSpace(newPositionLeft).getPiece() == null){
-            addMove(new Step(this, from, board.getSpace(newPositionLeft)));
-        }
+        if (board.isOnBoard(newPositionRight)){
 
-        if (board.isOnBoard(newPositionRight) && board.getSpace(newPositionRight).getPiece() == null){
-            addMove(new Step(this, from, board.getSpace(newPositionRight)));
+            Space to = board.getSpace(newPositionRight);
+
+            if (to.getPiece() == null){
+
+                addMove(new Slide(this, from, to));
+            }
         }
+//        Space from = board.getSpace(getPosition());
+//
+//        int[] newPositionLeft = {getPosition()[0] + leftForward.getRowChange() , getPosition()[1] + leftForward.getColChange()};
+//
+//        int[] newPositionRight = {getPosition()[0] + rightForward.getRowChange() , getPosition()[1] + rightForward.getColChange()};
+//
+//        if (board.isOnBoard(newPositionLeft) && board.getSpace(newPositionLeft).getPiece() == null){
+//            addMove(new Step(this, from, board.getSpace(newPositionLeft)));
+//        }
+//
+//        if (board.isOnBoard(newPositionRight) && board.getSpace(newPositionRight).getPiece() == null){
+//            addMove(new Step(this, from, board.getSpace(newPositionRight)));
+//        }
 
     }
 

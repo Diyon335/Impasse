@@ -2,15 +2,10 @@ package AI;
 
 import AbstractClasses.Move;
 import AbstractClasses.Piece;
-import Enums.Colour;
 import GameClasses.*;
-import Moves.BearOff;
-import Moves.Crown;
 import Moves.Impasse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class State {
@@ -56,14 +51,6 @@ public class State {
         return this.player;
     }
 
-    public Player getOpponent(){
-        return this.opponent;
-    }
-
-    public int possibleNextStates(){
-        return this.moves.size();
-    }
-
     public List<State> getNextStates(){
 
         List<State> toReturn = new ArrayList<>();
@@ -74,7 +61,6 @@ public class State {
             boardCopy.copyBoardFrom(this.board);
 
             Player player = boardCopy.getTurn();
-            Player opponent = boardCopy.getOpponent();
 
             move.movePiece(boardCopy);
 
@@ -83,41 +69,11 @@ public class State {
             }
 
             if (boardCopy.hasSingleInFurthestRow(player) && player.hasFreeSingles()){
-
-//                    for (Piece piece : player.getPieces()){
-//
-//                        if (piece instanceof Single){
-//                            if (!((Single) piece).canCrown()){
-//                                piece.clearMoves();
-//                            }
-//                        }
-//
-//                        if (piece instanceof DoublePiece){
-//                            piece.clearMoves();
-//                        }
-//                    }
-//
-                //boardCopy.makeStateDesirable();
                 toReturn.add(new State(boardCopy));
                 continue;
             }
 
             if (boardCopy.hasDoublesInNearestRow(player)){
-
-//                    for (Piece piece : player.getPieces()){
-//
-//                        if (piece instanceof Single){
-//                            piece.clearMoves();
-//                        }
-//
-//                        if (piece instanceof DoublePiece){
-//                            if(!((DoublePiece) piece).canBearOff()){
-//                                piece.clearMoves();
-//                            }
-//                        }
-//                    }
-//
-                //boardCopy.makeStateDesirable();
                 toReturn.add(new State(boardCopy));
                 continue;
 

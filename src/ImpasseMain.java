@@ -1,4 +1,3 @@
-import Enums.GameState;
 import GameClasses.GameManager;
 
 /**
@@ -15,9 +14,15 @@ public class ImpasseMain {
      */
     public static void main(String[] args) {
 
-        GameManager game = new GameManager(8,8, true, true, false);
+        long start = System.currentTimeMillis();
 
+        int treeDepth = 5;
+        int searchDepth = 5;
+        GameManager game = new GameManager(8,8, false, false, treeDepth, searchDepth);
         game.play();
+
+        long end = System.currentTimeMillis();
+        System.out.println("Time elapsed: "+(end - start)/1000);
 
     }
 }

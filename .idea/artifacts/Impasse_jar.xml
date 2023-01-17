@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Impasse:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Impasse_jar</output-path>
+    <root id="archive" name="Impasse.jar">
+      <element id="module-output" name="Impasse" />
+    </root>
+  </artifact>
+</component>

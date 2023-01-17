@@ -19,16 +19,7 @@ public class Slide extends Move {
 
     @Override
     public boolean canBeApplied() {
-        return getTo().getPiece()==null && getMovingPiece().hasLegalSpace(getTo()) && (getMovingPiece() instanceof DoublePiece);
-    }
-
-    @Override
-    public void movePiece(GameManager gameManager) {
-
-        gameManager.getBoard().getSpace(getFrom().getRow(), getFrom().getCol()).setPiece(null);
-        gameManager.getBoard().getSpace(getTo().getRow(),getTo().getCol()).setPiece(getMovingPiece());
-        getMovingPiece().setPosition(getTo().getRow(), getTo().getCol());
-
+        return getTo().getPiece()==null && getMovingPiece().hasLegalSpace(getTo()) && (getMovingPiece() instanceof DoublePiece || getMovingPiece() instanceof Single);
     }
 
     @Override

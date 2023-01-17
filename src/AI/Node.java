@@ -88,45 +88,8 @@ public class Node {
 
     private void addChildLast(Node child){this.children.addLast(child);}
 
-    public void addNode(Node node, boolean orderMoves){
-
-        if (orderMoves){
-
-            if (this.children.isEmpty()){
-                addChildLast(node);
-                return;
-            }
-
-            boolean maxPlayer = node.getState().getPlayer().getPieceColour() != Colour.WHITE;
-
-            int nodeScore = EvaluationFunction.evaluate(node.getState(), maxPlayer);
-            int firstChildScore = EvaluationFunction.evaluate(this.children.getFirst().getState(), maxPlayer);
-
-            if (maxPlayer){
-
-                if (nodeScore > firstChildScore){
-
-                    addChildFirst(node);
-
-                } else {
-                    addChildLast(node);
-                }
-
-            } else {
-
-                if (nodeScore < firstChildScore){
-
-                    addChildFirst(node);
-
-                } else {
-                    addChildLast(node);
-                }
-            }
-
-        } else {
-            addChildLast(node);
-        }
-
+    public void addNode(Node node){
+        addChildLast(node);
         node.setParent(this);
     }
 

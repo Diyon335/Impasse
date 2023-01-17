@@ -25,28 +25,6 @@ public class Impasse extends Move {
     }
 
     @Override
-    public void movePiece(GameManager gameManager) {
-
-        Player player = gameManager.getTurn();
-        Piece piece = getMovingPiece();
-        Space to = getTo();
-        Space from = getFrom();
-
-        if (piece instanceof DoublePiece){
-            Single newSingle = new Single(player.getPieceColour(), player, new int[]{to.getRow(), to.getCol()}, gameManager);
-
-            gameManager.getBoard().removePiece(getMovingPiece(), player);
-            gameManager.getBoard().addPiece(newSingle, player);
-
-            to.setPiece(newSingle);
-            return;
-        }
-
-        gameManager.getBoard().removePiece(from.getPiece(), player);
-        to.setPiece(null);
-    }
-
-    @Override
     public void movePiece(GameBoard board) {
 
         Player player = getMovingPiece().getPlayer();

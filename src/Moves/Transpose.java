@@ -24,19 +24,6 @@ public class Transpose extends Move {
     }
 
     @Override
-    public void movePiece(GameManager gameManager) {
-
-        Piece single = getTo().getPiece();
-
-        getFrom().setPiece(single);
-        getTo().setPiece(getMovingPiece());
-
-        single.setPosition(getMovingPiece().getRow(), getMovingPiece().getCol());
-        getMovingPiece().setPosition(getTo().getRow(), getTo().getCol());
-
-    }
-
-    @Override
     public void movePiece(GameBoard board) {
 
         Piece single = board.getPieceAt(getTo());

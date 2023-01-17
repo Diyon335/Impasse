@@ -25,20 +25,6 @@ public class BearOff extends Move {
     }
 
     @Override
-    public void movePiece(GameManager gameManager) {
-
-        Player player = gameManager.getTurn();
-
-        Single newSingle = new Single(player.getPieceColour(), player, new int[]{getTo().getRow(),getTo().getCol()}, gameManager);
-
-        gameManager.getBoard().removePiece(getMovingPiece(), player);
-        gameManager.getBoard().addPiece(newSingle, player);
-
-        getTo().setPiece(newSingle);
-        getTo().getPiece().setPosition(getTo().getRow(), getTo().getCol());
-    }
-
-    @Override
     public void movePiece(GameBoard board) {
 
         Player player = getMovingPiece().getPlayer();

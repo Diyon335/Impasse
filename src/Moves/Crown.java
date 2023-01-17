@@ -24,20 +24,6 @@ public class Crown extends Move {
     }
 
     @Override
-    public void movePiece(GameManager gameManager) {
-
-        Player player = gameManager.getTurn();
-        DoublePiece newDouble = new DoublePiece(player.getPieceColour(), player, new int[]{getTo().getRow(), getTo().getCol()}, gameManager);
-
-        gameManager.getBoard().removePiece(getFrom().getPiece(), player);
-        gameManager.getBoard().removePiece(getTo().getPiece(), player);
-        gameManager.getBoard().addPiece(newDouble, player);
-
-        getFrom().setPiece(null);
-        getTo().setPiece(newDouble);
-    }
-
-    @Override
     public void movePiece(GameBoard board) {
 
         Player player = getMovingPiece().getPlayer();

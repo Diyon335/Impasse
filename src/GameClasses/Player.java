@@ -81,10 +81,6 @@ public class Player {
     }
 
     public void removePiece(Piece piece){
-//        if (hasPiece(piece)){
-//
-//        }
-
         this.pieces.remove(piece);
         this.amountOfPieces-=piece.getCount();
 

@@ -2,18 +2,13 @@ package GameClasses;
 
 import AbstractClasses.Piece;
 import AbstractClasses.Move;
-import GameClasses.Player;
-import GameClasses.Space;
 import Enums.Direction;
 import Enums.Colour;
-import GameClasses.GameManager;
 import Moves.BearOff;
 import Moves.Slide;
-import Moves.Step;
 import Moves.Transpose;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class DoublePiece extends Piece {
 
@@ -78,7 +73,6 @@ public class DoublePiece extends Piece {
             rightBack = Direction.BLACK_BACKWARD_RIGHT;
         }
 
-        //Space from = getGameManager().getSpaceAtIndex(getPosition());
         Space from = board.getSpace(getRow(), getCol());
 
         int multiplierLeft = 1;
@@ -128,8 +122,6 @@ public class DoublePiece extends Piece {
                 newPositionRight[1] = getPosition()[1] + multiplierRight * rightBack.getColChange();
             }
         }
-
-
     }
 
     @Override

@@ -48,7 +48,7 @@ public class EvaluationFunction {
         Move move = state.getBoard().getLastMovePlayed();
         Piece piece = move.getMovingPiece();
 
-        if ((move instanceof Slide) || (move instanceof Step)){
+        if (move instanceof Slide){
             int toRow = move.getTo().getRow();
             int rowDiff = (piece instanceof Single) ? Math.abs(toRow - furthestRow) : Math.abs(toRow - nearestRow);
 
