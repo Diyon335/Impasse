@@ -1,5 +1,6 @@
 package GameClasses;
 
+import AbstractClasses.Move;
 import AbstractClasses.Piece;
 import Enums.Colour;
 
@@ -92,6 +93,20 @@ public class Player {
 
             if (p.compareTo(piece) == 0){
                 return p;
+            }
+        }
+
+        return null;
+    }
+
+    public Piece getPieceFromMove(Move move){
+
+        for (Piece p : this.pieces){
+            for (Move m : p.getLegalMoves()){
+
+                if (move.compareTo(m) == 0){
+                    return p;
+                }
             }
         }
 

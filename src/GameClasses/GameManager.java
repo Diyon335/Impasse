@@ -1,17 +1,16 @@
 package GameClasses;
 
-import AI.State;
-import AI.Tree;
+import AI.*;
 import AbstractClasses.Move;
 import AbstractClasses.Piece;
 import Enums.Colour;
 import Exceptions.InvalidPiecePlacementException;
 import GUI.GUI;
-import Moves.Impasse;
+import Moves.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.io.*;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 public class GameManager {
 
@@ -25,6 +24,7 @@ public class GameManager {
     private boolean isFirstMove;
 
     public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI, int treeDepth, int searchDepth){
+
         this.board = new GameBoard(rows, columns);
 
         this.white = this.board.getWhite();
@@ -190,17 +190,9 @@ public class GameManager {
 
     private Move moveAI(){
 
-        int rowsCols = this.board.getSize();
-        GameBoard boardCopy = new GameBoard(rowsCols, rowsCols);
-        boardCopy.copyBoardFrom(this.board);
-
-        State s = new State(boardCopy);
-        Tree tree = new Tree(s, this.treeDepth);
-
-        boolean maxPlayer = this.board.getTurn().getPieceColour() == Colour.WHITE;
-        tree.alphaBeta(tree.getRoot(), this.searchDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
-
-        Move m = tree.getBestMove();
+        IterativeDeepening id = new IterativeDeepening(this.board, 1);
+        id.applyID(2);
+        Move m = id.getBestMove();
         Piece p = getTurn().getPieceFromCopy(m.getMovingPiece());
 
         return p.getMove(m.getFrom(), m.getTo());
@@ -246,10 +238,6 @@ public class GameManager {
         }
 
         return move;
-    }
-
-    public Player getOpponent(){
-        return getTurn().getPieceColour() == Colour.WHITE ? this.black : this.white;
     }
 
     public int[] stringToIndex(String position) throws InvalidPiecePlacementException {

@@ -2,14 +2,17 @@ package AI;
 
 import Enums.Colour;
 
+import java.util.Collections;
+import java.util.Vector;
+
 /**
  * Class for the Node object
  */
-public class Node {
+public class Node implements Comparable<Node>{
 
     private State state;
     private Node parent;
-    private Vector children;
+    private Vector<Node> children;
     private int score;
 
     /**
@@ -18,7 +21,7 @@ public class Node {
      * @param children A vector array of nodes, each with their own state
      * @param parent The parent of the node
      */
-    public Node (State state, Vector children, Node parent){
+    public Node (State state, Vector<Node> children, Node parent){
         this.state = state;
         this.children = children;
         this.parent = parent;
@@ -30,7 +33,7 @@ public class Node {
      * @param state State within the node
      */
     public Node (State state){
-        this(state, new Vector(10), null);
+        this(state, new Vector<>(10), null);
     }
 
     /**
@@ -77,24 +80,35 @@ public class Node {
      * Gets the child states of the node
      * @return Returns a vector array of nodes
      */
-    public Vector getChildren(){
+    public Vector<Node> getChildren(){
         return this.children;
     }
 
-
-    private void addChildFirst(Node child){
-        this.children.addFirst(child);
+    public void addNode(Node node){
+        this.children.add(node);
+        node.setParent(this);
     }
 
-    private void addChildLast(Node child){this.children.addLast(child);}
+    public void sortChildren(){
+        Collections.sort(this.children);
+    }
 
-    public void addNode(Node node){
-        addChildLast(node);
-        node.setParent(this);
+    private boolean parentIsMaximiser(){
+        return this.parent.getState().getPlayer().getPieceColour() == Colour.WHITE;
     }
 
     @Override
     public String toString(){
         return this.state.getBoard().getLastMovePlayed().toString()+"/score: "+this.score;
+    }
+
+    @Override
+    public int compareTo(Node node) {
+
+        if (parentIsMaximiser()){
+            return node.getScore() - this.getScore();
+        }
+
+        return this.getScore() - node.getScore();
     }
 }

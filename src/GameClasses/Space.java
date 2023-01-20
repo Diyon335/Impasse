@@ -4,8 +4,6 @@ package GameClasses;
 import AbstractClasses.Piece;
 import Enums.Colour;
 
-import java.util.Arrays;
-
 public class Space implements Comparable<Space> {
 
     private Piece piece;
@@ -20,10 +18,6 @@ public class Space implements Comparable<Space> {
 
     public Colour getColour(){
         return this.colour;
-    }
-
-    public int[] getPosition() {
-        return this.position;
     }
 
     public int getRow(){

@@ -5,7 +5,7 @@ import GameClasses.GameManager;
  * @author (Game concept) Mark Steere
  * @author (Programming) Diyon Wickrameratne (i6176139)
  */
-
+@SuppressWarnings("all")
 public class ImpasseMain {
 
     /**
@@ -18,11 +18,16 @@ public class ImpasseMain {
 
         int treeDepth = 5;
         int searchDepth = 5;
-        GameManager game = new GameManager(8,8, false, false, treeDepth, searchDepth);
+
+        boolean p1IsAI = true;
+        boolean p2IsAI = true;
+
+        GameManager game = new GameManager(8,8, p1IsAI, p2IsAI, treeDepth, searchDepth);
         game.play();
 
         long end = System.currentTimeMillis();
-        System.out.println("Time elapsed: "+(end - start)/1000);
+        
+        if (p1IsAI && p2IsAI) System.out.println("Time elapsed: "+(end - start)/1000);
 
     }
 }

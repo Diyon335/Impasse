@@ -1,7 +1,6 @@
 package AbstractClasses;
 
 import GameClasses.GameBoard;
-import GameClasses.GameManager;
 import GameClasses.Space;
 
 /**
@@ -84,7 +83,7 @@ public abstract class Move implements Comparable<Move> {
     @Override
     public int compareTo(Move move){
 
-        if (this.to.compareTo(move.getTo()) == 0 && this.from.compareTo(move.getFrom()) == 0){
+        if (this.to.compareTo(move.getTo()) == 0 && this.from.compareTo(move.getFrom()) == 0 && this.movingPiece.getColour() == move.getMovingPiece().getColour()){
             return 0;
         }
 
