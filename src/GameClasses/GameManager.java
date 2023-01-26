@@ -8,8 +8,6 @@ import Exceptions.InvalidPiecePlacementException;
 import GUI.GUI;
 import Moves.*;
 
-import java.io.*;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class GameManager {

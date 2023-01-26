@@ -41,6 +41,10 @@ public class IterativeDeepening {
 
             for (Node child : childrenAtCurrentDepth){
 
+                if (child.isTerminalNode()){
+                    continue;
+                }
+
                 this.tree.growTree(child, 1);
 
                 currentTime = System.currentTimeMillis();
@@ -56,6 +60,7 @@ public class IterativeDeepening {
             currentTime = System.currentTimeMillis();
         }
 
+        System.out.println((currentTime - startTime)/1000);
     }
 
     public void sortTree(Node node){

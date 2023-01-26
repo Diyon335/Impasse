@@ -38,10 +38,6 @@ public class Tree {
 
     }
 
-    public void sortRootChildren(){
-        Collections.sort(this.root.getChildren());
-    }
-
 
     public Move getBestMove(){
         return this.root.getChildren().get(0).getState().getBoard().getLastMovePlayed();

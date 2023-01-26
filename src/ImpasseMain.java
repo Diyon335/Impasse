@@ -16,7 +16,7 @@ public class ImpasseMain {
 
         long start = System.currentTimeMillis();
 
-        boolean p1IsAI = false;
+        boolean p1IsAI = true;
         boolean p2IsAI = true;
 
         GameManager game = new GameManager(8,8, p1IsAI, p2IsAI);
