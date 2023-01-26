@@ -4,6 +4,8 @@ import AbstractClasses.Move;
 import Enums.Colour;
 import GameClasses.GameBoard;
 
+import java.util.Vector;
+
 public class IterativeDeepening {
 
     private GameBoard board;
@@ -29,42 +31,63 @@ public class IterativeDeepening {
         long currentTime = System.currentTimeMillis();
 
         boolean maxPlayer = this.board.getTurn().getPieceColour() == Colour.WHITE;
-        Node currentParentNode = this.tree.getRoot();
 
         while (currentTime - startTime < endTime){
 
-            AlphaBeta alphaBeta = new AlphaBeta(this.tree);
-            alphaBeta.applyAlphaBeta(this.tree.getRoot(), this.startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
+            AlphaBeta.applyAlphaBeta(this.tree.getRoot(), this.startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
 
-            if (currentParentNode == this.tree.getRoot()){
+            Vector<Node> childrenAtCurrentDepth = new Vector<>();
+            getChildrenAtDepth(childrenAtCurrentDepth, this.tree.getRoot(), this.startDepth);
 
-                this.tree.sortRootChildren();
+            for (Node child : childrenAtCurrentDepth){
 
-            } else {
+                this.tree.growTree(child, 1);
 
-                currentParentNode.sortChildren();
+                currentTime = System.currentTimeMillis();
+
+                if (currentTime - startTime < endTime){
+
+                    sortTree(this.tree.getRoot());
+                    break;
+                }
             }
-
-            int i = 0;
-            while (currentParentNode.getChildren().size() > 0 && i < this.startDepth){
-                currentParentNode = currentParentNode.getChildren().get(0);
-                i++;
-            }
-
-            this.tree.growTree(currentParentNode, 1);
 
             this.startDepth++;
             currentTime = System.currentTimeMillis();
         }
 
-        int i = 0;
-        Node n = this.tree.getRoot();
-        while (currentParentNode != n && n.getChildren().size() > 0){
-            n = n.getChildren().get(0);
-            i++;
-        }
-        System.out.println("Deepest depth reached: "+i);
+    }
 
+    public void sortTree(Node node){
+
+        if (node.getScore() != 0){
+            node.sortChildren();
+        }
+
+        for (Node n : node.getChildren()){
+            sortTree(n);
+        }
+    }
+
+    public void getChildrenAtDepth(Vector<Node> childrenToAdd, Node startNode, int depth){
+
+        if (depth - 1 == 0){
+
+            for (Node child: startNode.getChildren()){
+
+                if (child.getScore() != 0){
+
+                    childrenToAdd.add(child);
+                }
+            }
+
+            return;
+        }
+
+        for (Node child : startNode.getChildren()){
+
+            getChildrenAtDepth(childrenToAdd, child, depth - 1);
+        }
     }
 
     public Move getBestMove(){

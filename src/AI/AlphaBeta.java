@@ -4,13 +4,7 @@ import Enums.Colour;
 
 public class AlphaBeta {
 
-    private Tree tree;
-
-    public AlphaBeta(Tree tree){
-        this.tree = tree;
-    }
-
-    public int applyAlphaBeta(Node node, int depth, int alpha, int beta, boolean maxPlayer) {
+    public  static int applyAlphaBeta(Node node, int depth, int alpha, int beta, boolean maxPlayer) {
 
         if (node.isTerminalNode() || depth == 0){
             int value = EvaluationFunction.evaluate(node.getState(), maxPlayer);

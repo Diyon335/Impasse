@@ -4,8 +4,6 @@ import AbstractClasses.Move;
 import AbstractClasses.Piece;
 import GameClasses.*;
 
-import java.util.Arrays;
-
 public class Slide extends Move {
 
     public Slide(Piece movingPiece, Space from, Space to) {

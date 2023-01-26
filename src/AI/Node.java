@@ -105,6 +105,10 @@ public class Node implements Comparable<Node>{
     @Override
     public int compareTo(Node node) {
 
+        if (node.getScore() == 0){
+            return this.getScore();
+        }
+
         if (parentIsMaximiser()){
             return node.getScore() - this.getScore();
         }

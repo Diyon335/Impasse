@@ -16,13 +16,10 @@ public class ImpasseMain {
 
         long start = System.currentTimeMillis();
 
-        int treeDepth = 5;
-        int searchDepth = 5;
-
-        boolean p1IsAI = true;
+        boolean p1IsAI = false;
         boolean p2IsAI = true;
 
-        GameManager game = new GameManager(8,8, p1IsAI, p2IsAI, treeDepth, searchDepth);
+        GameManager game = new GameManager(8,8, p1IsAI, p2IsAI);
         game.play();
 
         long end = System.currentTimeMillis();

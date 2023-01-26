@@ -16,22 +16,18 @@ public class GameManager {
 
     private final GameBoard board;
     private Player white, black, turn;
-    private final int treeDepth, searchDepth;
 
     private boolean pieceHeld;
     private Piece pieceToMove;
     private GUI gui;
     private boolean isFirstMove;
 
-    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI, int treeDepth, int searchDepth){
+    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI){
 
         this.board = new GameBoard(rows, columns);
 
         this.white = this.board.getWhite();
         this.black = this.board.getBlack();
-
-        this.treeDepth = treeDepth;
-        this.searchDepth = searchDepth;
 
         this.isFirstMove = true;
         this.pieceHeld = false;
@@ -39,6 +35,9 @@ public class GameManager {
 
         if (p1IsAI){
             this.white.setAsAI();
+
+        } else {
+            this.isFirstMove = false;
         }
 
         if (p2IsAI){
@@ -87,6 +86,7 @@ public class GameManager {
 
             System.out.println(move);
             move.movePiece(this.board);
+            drawGUI();
             return true;
         }
 
@@ -94,10 +94,15 @@ public class GameManager {
         return false;
     }
 
+    public void drawGUI(){
+        this.gui.getPanel().drawBoard();
+    }
 
     public void registerTurn(){
 
-        this.gui.getPanel().drawBoard();
+        if (getTurn().isAI()){
+            drawGUI();
+        }
 
         if (getTurn().getAmountOfPieces() == 0){
             System.out.println(getTurn().getPieceColour()+" won the game!");
@@ -191,7 +196,7 @@ public class GameManager {
     private Move moveAI(){
 
         IterativeDeepening id = new IterativeDeepening(this.board, 1);
-        id.applyID(2);
+        id.applyID(5);
         Move m = id.getBestMove();
         Piece p = getTurn().getPieceFromCopy(m.getMovingPiece());
 
@@ -217,6 +222,7 @@ public class GameManager {
             applyMove(m);
             registerTurn();
         }
+
     }
 
     public Move makeRandomMove(Player player){

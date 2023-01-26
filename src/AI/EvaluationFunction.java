@@ -34,7 +34,7 @@ public class EvaluationFunction {
             return maxPlayer ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         }
 
-        int score = 0;
+        int score = 1;
 
         int furthestRow = maxPlayer ? 0 : 7;
         int nearestRow = maxPlayer ? 7 : 0;
@@ -44,6 +44,8 @@ public class EvaluationFunction {
         int impasse = maxPlayer ? 500 : -500;
 
         int transpose = maxPlayer ? 5 : -5;
+
+        int badSlide = maxPlayer ? -1000 : 1000;
 
         Move move = state.getBoard().getLastMovePlayed();
         Piece piece = move.getMovingPiece();
@@ -73,6 +75,22 @@ public class EvaluationFunction {
             if (moves == 0){
                 score += impasse;
             }
+
+//            for (State nextState : state.getNextStates()){
+//
+//                Move nextOpponentMove = nextState.getBoard().getLastMovePlayed();
+//
+//                if (nextOpponentMove instanceof Slide){
+//
+//                    if (nextOpponentMove.getTo().getRow() == getOpponentFurthestRow(maxPlayer)){
+//                        score += badSlide;
+//                    }
+//
+//                    if (nextOpponentMove.getTo().getRow() == getOpponentNearestRow(maxPlayer)){
+//                        score += badSlide;
+//                    }
+//                }
+//            }
         }
 
         if (move instanceof Transpose){
@@ -84,7 +102,34 @@ public class EvaluationFunction {
             score += transpose;
         }
 
+//        if (move instanceof Crown){
+//
+//            for (State nextState : state.getNextStates()){
+//
+//                Move nextOpponentMove = nextState.getBoard().getLastMovePlayed();
+//
+//                if (nextOpponentMove instanceof Slide){
+//
+//                    if (nextOpponentMove.getTo().getRow() == getOpponentFurthestRow(maxPlayer)){
+//                        score += badSlide;
+//                    }
+//
+//                    if (nextOpponentMove.getTo().getRow() == getOpponentNearestRow(maxPlayer)){
+//                        score += badSlide;
+//                    }
+//                }
+//            }
+//
+//        }
 
         return score;
+    }
+
+    private static int getOpponentFurthestRow(boolean maxPlayer){
+        return maxPlayer ? 7 : 0;
+    }
+
+    private static int getOpponentNearestRow(boolean maxPlayer){
+        return maxPlayer ? 0 : 7;
     }
 }

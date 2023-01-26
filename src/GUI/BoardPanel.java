@@ -74,6 +74,7 @@ public class BoardPanel extends JPanel {
             }
         }
 
+        validate();
         repaint();
     }
 }

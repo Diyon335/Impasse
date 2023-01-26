@@ -1,14 +1,10 @@
 package GameClasses;
 
-import AI.State;
 import AbstractClasses.Move;
 import AbstractClasses.Piece;
 import Enums.Colour;
-import Moves.Impasse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 public class GameBoard implements Comparable<GameBoard>{
 
     private Space[][] board;
@@ -70,14 +66,6 @@ public class GameBoard implements Comparable<GameBoard>{
 
     public Player getBlack(){
         return this.black;
-    }
-
-    public void setWhite(Player player){
-        this.white = player;
-    }
-
-    public void setBlack(Player player){
-        this.black = player;
     }
 
     public Move getLastMovePlayed(){
@@ -172,19 +160,6 @@ public class GameBoard implements Comparable<GameBoard>{
         return singles;
     }
 
-    public ArrayList<Piece> getFreeSingles(Player player){
-
-        ArrayList<Piece> singles = new ArrayList<>();
-
-        for (Piece p : player.getPieces()){
-            if (p instanceof Single){
-                singles.add(p);
-            }
-        }
-
-        return singles;
-    }
-
     public boolean hasSingleInFurthestRow(Player player){
         return getSinglesInFurthestRow(player).size() > 0;
     }
@@ -258,10 +233,6 @@ public class GameBoard implements Comparable<GameBoard>{
         setTurn(p);
     }
 
-    public void makeStateDesirable(){
-        this.whitePieces = 0;
-        this.blackPieces = 0;
-    }
 
     @Override
     public String toString(){
