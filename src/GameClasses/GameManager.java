@@ -19,8 +19,9 @@ public class GameManager {
     private Piece pieceToMove;
     private GUI gui;
     private boolean isFirstMove;
+    private int idTime;
 
-    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI){
+    public GameManager(int rows, int columns, boolean p1IsAI, boolean p2IsAI, int idTime){
 
         this.board = new GameBoard(rows, columns);
 
@@ -30,6 +31,7 @@ public class GameManager {
         this.isFirstMove = true;
         this.pieceHeld = false;
         this.pieceToMove = null;
+        this.idTime = idTime;
 
         if (p1IsAI){
             this.white.setAsAI();
@@ -194,7 +196,7 @@ public class GameManager {
     private Move moveAI(){
 
         IterativeDeepening id = new IterativeDeepening(this.board, 1);
-        id.applyID(5);
+        id.applyID(this.idTime);
         Move m = id.getBestMove();
         Piece p = getTurn().getPieceFromCopy(m.getMovingPiece());
 

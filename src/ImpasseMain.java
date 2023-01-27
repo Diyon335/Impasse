@@ -18,8 +18,9 @@ public class ImpasseMain {
 
         boolean p1IsAI = true;
         boolean p2IsAI = true;
+        int idTime = 10;
 
-        GameManager game = new GameManager(8,8, p1IsAI, p2IsAI);
+        GameManager game = new GameManager(8,8, p1IsAI, p2IsAI, idTime);
         game.play();
 
         long end = System.currentTimeMillis();

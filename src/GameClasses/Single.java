@@ -6,6 +6,7 @@ import Enums.Direction;
 import Enums.Colour;
 import Moves.Crown;
 import Moves.Slide;
+import Moves.Transpose;
 
 import java.util.ArrayList;
 
@@ -79,42 +80,43 @@ public class Single extends Piece {
 
         Space from = board.getSpace(getPosition());
 
-        int[] newPositionLeft = {getPosition()[0] + leftForward.getRowChange() , getPosition()[1] + leftForward.getColChange()};
+        int multiplierLeft = 1;
+        int[] newPositionLeft = {getPosition()[0] + multiplierLeft*leftForward.getRowChange() , getPosition()[1] + multiplierLeft*leftForward.getColChange()};
 
-        if (board.isOnBoard(newPositionLeft)){
+        while (board.isOnBoard(newPositionLeft)){
 
             Space to = board.getSpace(newPositionLeft);
 
-            if (to.getPiece() == null){
+            if (to.getPiece() != null){
 
+                break;
+
+            } else {
                 addMove(new Slide(this, from, to));
+                multiplierLeft++;
+                newPositionLeft[0] = getPosition()[0] + multiplierLeft * leftForward.getRowChange();
+                newPositionLeft[1] = getPosition()[1] + multiplierLeft * leftForward.getColChange();
             }
         }
 
-        int[] newPositionRight = {getPosition()[0] + rightForward.getRowChange() , getPosition()[1] + rightForward.getColChange()};
+        int multiplierRight = 1;
+        int[] newPositionRight = {getPosition()[0] + multiplierRight*rightForward.getRowChange() , getPosition()[1] + multiplierRight*rightForward.getColChange()};
 
-        if (board.isOnBoard(newPositionRight)){
+        while (board.isOnBoard(newPositionRight)){
 
             Space to = board.getSpace(newPositionRight);
 
-            if (to.getPiece() == null){
+            if (to.getPiece() != null){
 
+                break;
+
+            } else {
                 addMove(new Slide(this, from, to));
+                multiplierRight++;
+                newPositionRight[0] = getPosition()[0] + multiplierRight * rightForward.getRowChange();
+                newPositionRight[1] = getPosition()[1] + multiplierRight * rightForward.getColChange();
             }
         }
-//        Space from = board.getSpace(getPosition());
-//
-//        int[] newPositionLeft = {getPosition()[0] + leftForward.getRowChange() , getPosition()[1] + leftForward.getColChange()};
-//
-//        int[] newPositionRight = {getPosition()[0] + rightForward.getRowChange() , getPosition()[1] + rightForward.getColChange()};
-//
-//        if (board.isOnBoard(newPositionLeft) && board.getSpace(newPositionLeft).getPiece() == null){
-//            addMove(new Step(this, from, board.getSpace(newPositionLeft)));
-//        }
-//
-//        if (board.isOnBoard(newPositionRight) && board.getSpace(newPositionRight).getPiece() == null){
-//            addMove(new Step(this, from, board.getSpace(newPositionRight)));
-//        }
 
     }
 

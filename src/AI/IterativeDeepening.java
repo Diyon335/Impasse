@@ -4,6 +4,7 @@ import AbstractClasses.Move;
 import Enums.Colour;
 import GameClasses.GameBoard;
 
+import java.util.Collections;
 import java.util.Vector;
 
 public class IterativeDeepening {
@@ -40,6 +41,8 @@ public class IterativeDeepening {
 
             Vector<Node> children = new Vector<>();
 
+            sortTree(this.tree.getRoot());
+
             for (Node child : currentChildren){
 
                 if (child.isTerminalNode()){
@@ -52,8 +55,8 @@ public class IterativeDeepening {
 
                 currentTime = System.currentTimeMillis();
 
-                if (currentTime - startTime < endTime){
-
+                if (currentTime - startTime >= endTime){
+                    AlphaBeta.applyAlphaBeta(this.tree.getRoot(), this.startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
                     sortTree(this.tree.getRoot());
                     break;
                 }
@@ -61,19 +64,21 @@ public class IterativeDeepening {
 
             currentChildren = new Vector<>(children);
 
-            sortTree(this.tree.getRoot());
-
             this.startDepth++;
             currentTime = System.currentTimeMillis();
         }
+
+        System.out.println("Depth reached: "+this.startDepth);
 
     }
 
     public void sortTree(Node node){
 
-        if (node.getScore() != 0){
-            node.sortChildren();
+        if (node.getChildren().size() < 1){
+            return;
         }
+
+        node.sortChildren();
 
         for (Node n : node.getChildren()){
             sortTree(n);
@@ -84,3 +89,5 @@ public class IterativeDeepening {
         return this.tree.getBestMove();
     }
 }
+
+

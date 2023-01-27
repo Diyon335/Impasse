@@ -87,12 +87,4 @@ public class EvaluationFunction {
 
         return score;
     }
-
-    private static int getOpponentFurthestRow(boolean maxPlayer){
-        return maxPlayer ? 7 : 0;
-    }
-
-    private static int getOpponentNearestRow(boolean maxPlayer){
-        return maxPlayer ? 0 : 7;
-    }
 }
